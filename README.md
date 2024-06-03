@@ -8,5 +8,4 @@
 ### might include coupons available and include those into the price
 
 # Technology:
-## frontend: html, css, javascript
-## backend: node.js
+html, css, javascript,node.js
