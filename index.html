@@ -1,0 +1,17 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Price Tracker</title>
+</head>
+<body>
+    <h1>Price Tracker</h1>
+    <a href="/add">Add a new product</a>
+    <ul>
+        <% products.forEach(product => { %>
+            <li><%= product.name %>: $<%= product.price %> (Last updated: <%= product.last_updated %>)</li>
+        <% }) %>
+    </ul>
+</body>
+</html>
