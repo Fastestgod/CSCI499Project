@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 const app = express();
 const port = 3000;
 
-// Function to fetch price from a URL using axios
+/*Function to fetch price from a URL using axios
 async function fetchPrice(url, priceSelector) {
     try {
         const response = await axios.get(url, {
@@ -27,6 +27,7 @@ async function fetchPrice(url, priceSelector) {
         return await fetchPriceWithPuppeteer(url, priceSelector);
     }
 }
+    */
 
 // Function to fetch price using Puppeteer
 async function fetchPriceWithPuppeteer(url, priceSelector) {
@@ -46,13 +47,12 @@ app.get('/', (req, res) => {
 
 app.get('/prices', async (req, res) => {
     const dellUrl = 'https://www.dell.com/en-us/shop/cty/pdp/spd/inspiron-15-3520-laptop/';
-    const dellPriceSelector = 'h3 font-weight-bold mb-1 text-nowrap sale-price'; // Adjust this selector based on the Dell website
-
+    const dellPriceSelector = 'span.h3.font-weight-bold.mb-1.text-nowrap.sale-price';
     const sonyUrl = 'https://www.sony.com/electronics/tv/t/televisions';
     const sonyPriceSelector = '.product-price'; // Adjust this selector based on the Sony website
 
-    const dellPrice = await fetchPrice(dellUrl, dellPriceSelector);
-    const sonyPrice = await fetchPrice(sonyUrl, sonyPriceSelector);
+    const dellPrice = await fetchPriceWithPuppeteer(dellUrl, dellPriceSelector);
+    const sonyPrice = await fetchPriceWithPuppeteer(sonyUrl, sonyPriceSelector);
 
     res.json({ dell: dellPrice, sony: sonyPrice });
 });
