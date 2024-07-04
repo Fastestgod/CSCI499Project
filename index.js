@@ -10,11 +10,10 @@ async function configureBrowser() {
 }
 
 async function checkPrice(page) {
-    await page.reload({ waitUntil: 'load', timeout: 0 });
     try {
-        await page.waitForSelector('.aok-offscreen', { timeout: 5000 });
+        await page.waitForSelector('.a-offscreen', { timeout: 5000 });
         const currentPrice = await page.evaluate(() => {
-            const priceElement = document.querySelector('.aok-offscreen');
+            const priceElement = document.querySelector('.a-offscreen');
             if (priceElement) {
                 const priceText = priceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
                 return parseFloat(priceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
@@ -22,13 +21,29 @@ async function checkPrice(page) {
             return null;
         });
 
-        if (currentPrice !== null) {
-            console.log(currentPrice);
+        const primePrice = await page.evaluate(() => {
+            const primePriceElement = document.querySelector('a[data-benefit-optimization-id="PrimeExclusiveMario"] .a-size-base');
+            if (primePriceElement) {
+                const primePriceText = primePriceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
+                return parseFloat(primePriceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
+            }
+            return null;
+        });
+
+        if (currentPrice !== null ) {
+            console.log("Current nonprime price is $" + currentPrice);
+            if (primePrice == null){
+                console.log('Prime price is $' + currentPrice);
+            }
+            else{
+                console.log('Prime price is $' + primePrice);
+            }
+            
         } else {
-            console.log("Price element not found.");
+            console.log("Price information not found.");
         }
     } catch (error) {
-        console.log("Error finding price element:", error);
+        console.log("Error finding price information:", error);
         const html = await page.content();
         console.log(html);  // Output the HTML for debugging
     }
