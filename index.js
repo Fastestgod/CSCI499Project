@@ -1,38 +1,99 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const bodyParser = require('body-parser');
+const path = require('path');
+const cron = require('node-cron');
 
 const app = express();
 const PORT = 3000;
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
+let products = [];
 
-app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
-
-// Serve the homepage with the form
+// Serve the homepage
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Welcome to PriceWatch!' });
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Handle the form submission and fetch the price
-app.post('/check-price', async (req, res) => {
+// Add URL to the list and fetch initial product details
+app.post('/add-url', async (req, res) => {
     const url = req.body.amazonUrl;
-    const { price, error } = await fetchPrice(url);
+    const { title, price, primePrice, imageUrl, error } = await fetchProductDetails(url);
     if (error) {
-        res.send(`Error fetching price: ${error}`);
-    } else {
-        res.send(`The price of the item is ${price}`);
+        res.send(`Error fetching product details: ${error}`);
+        return;
     }
+    const now = new Date().toLocaleString();
+    const history = [{ time: now, price, primePrice }];
+    products.push({ url, title, price, primePrice, imageUrl, lastUpdated: now, history });
+    res.redirect('/');
 });
 
-async function fetchPrice(url) {
+// Get the list of URLs
+app.get('/get-urls', (req, res) => {
+    res.json(products);
+});
+
+// Display product page with details
+app.get('/product/:index', (req, res) => {
+    const index = req.params.index;
+    const product = products[index];
+    if (!product) {
+        res.status(404).send('Product not found');
+        return;
+    }
+    const historyHtml = product.history.map(entry => `
+        <li>
+            Time: ${entry.time}, Price: ${entry.price}, Prime Price: ${entry.primePrice}
+        </li>`).join('');
+    
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Product Details</title>
+        </head>
+        <body>
+            <h1>Product Details</h1>
+            <p>Title: ${product.title}</p>
+            <p>URL: <a href="${product.url}" target="_blank">${product.url}</a></p>
+            <p>Price: ${product.price}</p>
+            <p>Prime Price: ${product.primePrice}</p>
+            <p>Last Updated: ${product.lastUpdated}</p>
+            <img src="${product.imageUrl}" alt="Product Image">
+            <h2>Price History</h2>
+            <ul>${historyHtml}</ul>
+            <a href="/">Back to Home</a>
+        </body>
+        </html>
+    `);
+});
+
+async function fetchProductDetails(url) {
     let browser = null;
     try {
         browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.goto(url, { waitUntil: 'domcontentloaded' });
-        const price = await page.$eval('.a-offscreen', el => el.innerText);
-        return { price };
+
+        const title = await page.$eval('h1 span#productTitle', el => el.innerText.trim());
+        const price = await page.$eval('.a-offscreen', el => el.innerText.trim());
+        const imageUrl = await page.$eval('#landingImage', img => img.src);
+        const primePrice = await page.evaluate(() => {
+            const primePriceElement = document.querySelector('a[data-benefit-optimization-id="PrimeExclusiveMario"] .a-size-base');
+            if (primePriceElement) {
+                const primePriceText = primePriceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
+                return parseFloat(primePriceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
+            }
+            return null;
+        }) || price;
+
+        return { title, price, primePrice, imageUrl };
     } catch (error) {
         return { error: error.message };
     } finally {
@@ -42,63 +103,54 @@ async function fetchPrice(url) {
     }
 }
 
+async function updatePrices() {
+    for (let product of products) {
+        const { price, primePrice, error } = await fetchProductDetails(product.url);
+        if (!error) {
+            const now = new Date().toLocaleString();
+            product.price = price;
+            product.primePrice = primePrice;
+            product.lastUpdated = now;
+            product.history.push({ time: now, price, primePrice });
+        }
+    }
+}
+
+// Schedule the price update function to run every 15 minutes
+cron.schedule('*/15 * * * *', updatePrices);
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
 
-const url = 'https://www.amazon.com/dp/B0C8PSMPTH/ref=sspa_dk_detail_0?psc=1&pd_rd_i=B0C8PSMPTH&pd_rd_w=1rPOq&content-id=amzn1.sym.386c274b-4bfe-4421-9052-a1a56db557ab&pf_rd_p=386c274b-4bfe-4421-9052-a1a56db557ab&pf_rd_r=GNQXPM489PJR4MYFMHN8&pd_rd_wg=xTp5y&pd_rd_r=8d748c51-438b-4e28-933a-0cdbb7d3e804&s=electronics&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM';
+// Client-side JavaScript included below to be sent as part of the HTML response
+const clientJs = `
+document.addEventListener('DOMContentLoaded', () => {
+    fetchUrls();
 
-async function configureBrowser() {
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'load', timeout: 0 });
-    return { browser, page };
-}
-
-async function checkPrice(page) {
-    try {
-        await page.waitForSelector('.a-offscreen', { timeout: 5000 });
-        const currentPrice = await page.evaluate(() => {
-            const priceElement = document.querySelector('.a-offscreen');
-            if (priceElement) {
-                const priceText = priceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
-                return parseFloat(priceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
-            }
-            return null;
-        });
-
-        const primePrice = await page.evaluate(() => {
-            const primePriceElement = document.querySelector('a[data-benefit-optimization-id="PrimeExclusiveMario"] .a-size-base');
-            if (primePriceElement) {
-                const primePriceText = primePriceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
-                return parseFloat(primePriceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
-            }
-            return null;
-        });
-
-        if (currentPrice !== null ) {
-            console.log("Current nonprime price is $" + currentPrice);
-            if (primePrice == null){
-                console.log('Prime price is $' + currentPrice);
-            }
-            else{
-                console.log('Prime price is $' + primePrice);
-            }
-            
-        } else {
-            console.log("Price information not found.");
-        }
-    } catch (error) {
-        console.log("Error finding price information:", error);
-        const html = await page.content();
-        console.log(html);  // Output the HTML for debugging
+    async function fetchUrls() {
+        const response = await fetch('/get-urls');
+        const products = await response.json();
+        updateProductList(products);
     }
-}
 
-async function startTracking() {
-    const { browser, page } = await configureBrowser();
-    await checkPrice(page);
-    await browser.close();
-}
+    function updateProductList(products) {
+        const urlList = document.getElementById('urlList');
+        urlList.innerHTML = '';
+        products.forEach((product, index) => {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = \`/product/\${index}\`;
+            link.innerText = product.title;
+            listItem.appendChild(link);
+            urlList.appendChild(listItem);
+        });
+    }
+});
+`;
 
-startTracking();
+// Middleware to serve the client-side JavaScript
+app.get('/index.js', (req, res) => {
+    res.type('application/javascript');
+    res.send(clientJs);
+});
