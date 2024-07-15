@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/product.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">
+            <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo">
+        </a>
+    </header>
+    <div class="container product-container">
+        <div class="product-image">
+            <img src="<%= product.imageUrl %>" alt="Product Image">
+            <div class="price-history">
+                <h2>Price History</h2>
+                <p>Last Updated: <%= product.lastUpdated %></p>
+                <ul>
+                    <% product.history.forEach(entry => { %>
+                        <li>Time: <%= entry.time %>, Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        </div>
+        <div class="product-details">
+            <div class="product-title"><%= product.title %></div>
+            <div class="price-box">Amazon Price: <%= product.price %></div>
+            <div class="price-box">Prime Price: <%= product.primePrice %></div>
+            <div class="buy-now-button-container">
+                <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="tracked-products">
+        <h2>Tracked Products</h2>
+        <ul id="urlList"></ul>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUrls();
+
+            async function fetchUrls() {
+                const response = await fetch('/get-urls');
+                const products = await response.json();
+                updateProductList(products);
+            }
+
+            function updateProductList(products) {
+                const urlList = document.getElementById('urlList');
+                urlList.innerHTML = '';
+                products.forEach((product, index) => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/product/${index}`;
+                    link.innerText = product.title;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.innerHTML = '<img src="/images/delete.png" alt="Delete" class="delete-icon">';
+                    deleteButton.onclick = () => removeUrl(index);
+
+                    listItem.appendChild(link);
+                    listItem.appendChild(deleteButton);
+                    urlList.appendChild(listItem);
+                });
+            }
+
+            async function removeUrl(index) {
+                await fetch(`/delete-url/${index}`, {
+                    method: 'DELETE',
+                });
+                fetchUrls();
+            }
+        });
+    </script>
+</body>
+</html>

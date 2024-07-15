@@ -7,7 +7,10 @@ const cron = require('node-cron');
 const app = express();
 const PORT = 3000;
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Set up EJS
+app.set('view engine', 'ejs');
+
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -15,7 +18,7 @@ let products = [];
 
 // Serve the homepage
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.render('index');  // This will now render the index.ejs file 
 });
 
 // Add URL to the list and fetch initial product details
@@ -37,6 +40,17 @@ app.get('/get-urls', (req, res) => {
     res.json(products);
 });
 
+// Handle URL deletion
+app.delete('/delete-url/:index', (req, res) => {
+    const index = req.params.index;
+    if (index >= 0 && index < products.length) {
+        products.splice(index, 1);
+        res.status(200).send();
+    } else {
+        res.status(404).send('Product not found');
+    }
+});
+
 // Display product page with details
 app.get('/product/:index', (req, res) => {
     const index = req.params.index;
@@ -45,33 +59,7 @@ app.get('/product/:index', (req, res) => {
         res.status(404).send('Product not found');
         return;
     }
-    const historyHtml = product.history.map(entry => `
-        <li>
-            Time: ${entry.time}, Price: ${entry.price}, Prime Price: ${entry.primePrice}
-        </li>`).join('');
-    
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Product Details</title>
-        </head>
-        <body>
-            <h1>Product Details</h1>
-            <p>Title: ${product.title}</p>
-            <p>URL: <a href="${product.url}" target="_blank">${product.url}</a></p>
-            <p>Price: ${product.price}</p>
-            <p>Prime Price: ${product.primePrice}</p>
-            <p>Last Updated: ${product.lastUpdated}</p>
-            <img src="${product.imageUrl}" alt="Product Image">
-            <h2>Price History</h2>
-            <ul>${historyHtml}</ul>
-            <a href="/">Back to Home</a>
-        </body>
-        </html>
-    `);
+    res.render('product', { product });
 });
 
 async function fetchProductDetails(url) {
@@ -121,36 +109,4 @@ cron.schedule('*/15 * * * *', updatePrices);
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
-});
-
-// Client-side JavaScript included below to be sent as part of the HTML response
-const clientJs = `
-document.addEventListener('DOMContentLoaded', () => {
-    fetchUrls();
-
-    async function fetchUrls() {
-        const response = await fetch('/get-urls');
-        const products = await response.json();
-        updateProductList(products);
-    }
-
-    function updateProductList(products) {
-        const urlList = document.getElementById('urlList');
-        urlList.innerHTML = '';
-        products.forEach((product, index) => {
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            link.href = \`/product/\${index}\`;
-            link.innerText = product.title;
-            listItem.appendChild(link);
-            urlList.appendChild(listItem);
-        });
-    }
-});
-`;
-
-// Middleware to serve the client-side JavaScript
-app.get('/index.js', (req, res) => {
-    res.type('application/javascript');
-    res.send(clientJs);
 });

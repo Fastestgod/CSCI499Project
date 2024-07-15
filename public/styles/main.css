@@ -1,0 +1,153 @@
+body, html {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+}
+
+.logo {
+    max-width: 600px; 
+    margin: 20px 0;
+    animation: glow 1.5s infinite alternate; /* Applies glowing animation */
+    cursor: grab; 
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 10px blue;
+    }
+    to {
+        filter: drop-shadow(0 0 20px blue) drop-shadow(0 0 30px blue); 
+    }
+}
+
+h1 {
+    font-size: 2rem;
+    color: #333;
+}
+
+p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.search-section p {
+    text-align: left;
+    margin-top: 50px;
+    color: black;
+    font-weight: bold;
+}
+
+.search-section form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #003d80;
+}
+
+ul#urlList {
+    list-style: none;
+    padding: 0;
+}
+
+ul#urlList li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+ul#urlList li a {
+    text-decoration: none;
+    color: #0056b3;
+}
+
+ul#urlList li a:hover {
+    text-decoration: underline;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.delete-button:hover {
+    background: none; /* Ensures no background color on hover */
+}
+.delete-icon {
+    width: 20px; /* Adjust size as needed */
+    height: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    height: 400px; /* Adjust height as needed */
+    margin: 120px auto 20px auto; /* Add top margin to move the carousel down */
+    overflow: hidden;
+}
+
+.carousel-item {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensure the image is not cut off */
+}
+
+.carousel-item.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.carousel-item.previous {
+    transform: translateX(-100%);
+}
+
+.carousel-item.next {
+    transform: translateX(100%);
+}

@@ -3,13 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>PriceWatch</title>
+    <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
-    <h1><%= title %></h1>
-    <form action="/check-price" method="post">
-        <input type="text" name="amazonUrl" placeholder="Enter Amazon product URL" required>
-        <button type="submit">Check Price</button>
-    </form>
+    <div class="container">
+        <header>
+            <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo" class="logo">
+            <h1>Welcome to PriceWatch</h1>
+            <p>Are you tired of being scammed with unrealistic prices in online shopping? With PriceWatch, never lose money again! Paste in the link to your product in the search bar below and start saving!</p>
+        </header>
+        <section class="search-section">
+            <p>Start Searching</p>
+            <form id="urlForm" action="/add-url" method="post">
+                <input type="text" id="amazonUrl" name="amazonUrl" placeholder="Enter Amazon URL" required>
+                <button type="submit">Add URL</button>
+            </form>
+        </section>
+        <h2>Tracked Products</h2>
+        <ul id="urlList"></ul>
+
+        <div class="carousel">
+            <div class="carousel-item active">
+                <img src="/images/beats.jpg" alt="Placeholder 1">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/duffle.jpg" alt="Placeholder 2">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/tv.jpg" alt="Placeholder 3">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/camera.jpeg" alt="Placeholder 4">
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUrls();
+
+            async function fetchUrls() {
+                const response = await fetch('/get-urls');
+                const products = await response.json();
+                updateProductList(products);
+            }
+
+            function updateProductList(products) {
+                const urlList = document.getElementById('urlList');
+                urlList.innerHTML = '';
+                products.forEach((product, index) => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/product/${index}`;
+                    link.innerText = product.title;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.innerHTML = '<img src="/images/delete.png" alt="Delete" class="delete-icon">';
+                    deleteButton.onclick = () => removeUrl(index);
+
+                    listItem.appendChild(link);
+                    listItem.appendChild(deleteButton);
+                    urlList.appendChild(listItem);
+                });
+            }
+
+            async function removeUrl(index) {
+                await fetch(`/delete-url/${index}`, {
+                    method: 'DELETE',
+                });
+                fetchUrls();
+            }
+
+            // Carousel functionality
+            let currentIndex = 0;
+            const items = document.querySelectorAll('.carousel-item');
+            const totalItems = items.length;
+
+            function showNextItem() {
+                const previousIndex = currentIndex;
+                currentIndex = (currentIndex + 1) % totalItems;
+
+                items[previousIndex].classList.remove('active');
+                items[previousIndex].classList.add('previous');
+                items[currentIndex].classList.add('next');
+                setTimeout(() => {
+                    items[previousIndex].classList.remove('previous');
+                    items[currentIndex].classList.remove('next');
+                    items[currentIndex].classList.add('active');
+                }, 20); // Delay for transitioning effect
+            }
+
+            setInterval(showNextItem, 5000); // Change image every 7 seconds
+        });
+    </script>
 </body>
 </html>
