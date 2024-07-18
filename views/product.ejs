@@ -44,7 +44,7 @@
             fetchUrls();
 
             async function fetchUrls() {
-                const response = await fetch('/get-urls');
+                const response = await fetch('/products/get-urls');
                 const products = await response.json();
                 updateProductList(products);
             }
@@ -55,7 +55,7 @@
                 products.forEach((product, index) => {
                     const listItem = document.createElement('li');
                     const link = document.createElement('a');
-                    link.href = `/product/${index}`;
+                    link.href = `/products/${index}`;
                     link.innerText = product.title;
 
                     const deleteButton = document.createElement('button');
@@ -70,7 +70,7 @@
             }
 
             async function removeUrl(index) {
-                await fetch(`/delete-url/${index}`, {
+                await fetch(`/products/delete-url/${index}`, {
                     method: 'DELETE',
                 });
                 fetchUrls();

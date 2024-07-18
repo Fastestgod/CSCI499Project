@@ -15,7 +15,7 @@
         </header>
         <section class="search-section">
             <p>Start Searching</p>
-            <form id="urlForm" action="/add-url" method="post">
+            <form id="urlForm" action="/products/add-url" method="post">
                 <input type="text" id="amazonUrl" name="amazonUrl" placeholder="Enter Amazon URL" required>
                 <button type="submit">Add URL</button>
             </form>
@@ -43,7 +43,7 @@
             fetchUrls();
 
             async function fetchUrls() {
-                const response = await fetch('/get-urls');
+                const response = await fetch('/products/get-urls');
                 const products = await response.json();
                 updateProductList(products);
             }
@@ -54,7 +54,7 @@
                 products.forEach((product, index) => {
                     const listItem = document.createElement('li');
                     const link = document.createElement('a');
-                    link.href = `/product/${index}`;
+                    link.href = `/products/${index}`;
                     link.innerText = product.title;
 
                     const deleteButton = document.createElement('button');
@@ -69,7 +69,7 @@
             }
 
             async function removeUrl(index) {
-                await fetch(`/delete-url/${index}`, {
+                await fetch(`/products/delete-url/${index}`, {
                     method: 'DELETE',
                 });
                 fetchUrls();
