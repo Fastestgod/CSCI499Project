@@ -1,68 +1,61 @@
 const express = require('express');
 const router = express.Router();
-const fetch = require('node-fetch');
+const fetchProductDetails = require('../utils/fetchProductDetails');
 
-const products = [];
+// Add URL to the list and fetch initial product details
+router.post('/add-url', async (req, res) => {
+    const url = req.body.amazonUrl;
+    const products = req.app.locals.products;
 
-function normalizeAmazonUrl(url) {
-    const asinMatch = url.match(/\/dp\/([A-Z0-9]{10})/);
-    if (asinMatch) {
-        const asin = asinMatch[1];
-        return `https://www.amazon.com/dp/${asin}`;
+    // Check if the product already exists
+    if (products.some(product => product.url === url)) {
+        res.send('Product already exists in the list');
+        return;
     }
-    return url;
-}
 
-function fetchProductDetails(url) {
-    // Mock implementation of product details fetching
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve({
-                url,
-                title: 'Sample Product Title',
-                imageUrl: 'https://via.placeholder.com/150',
-                price: '$19.99',
-                primePrice: '$18.99',
-                lastUpdated: new Date().toLocaleString(),
-                history: [
-                    { time: new Date().toLocaleString(), price: '$19.99', primePrice: '$18.99' },
-                ]
-            });
-        }, 1000);
-    });
-}
+    try {
+        const { title, price, primePrice, imageUrl, error } = await fetchProductDetails(url);
+        if (error) {
+            res.send(`Error fetching product details: ${error}`);
+            return;
+        }
+        const now = new Date().toLocaleString();
+        const history = [{ time: now, price, primePrice }];
+        products.push({ url, title, price, primePrice, imageUrl, lastUpdated: now, history });
+        res.redirect('/');
+    } catch (error) {
+        console.error(`Error adding URL: ${error.message}`);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
+// Get the list of URLs
 router.get('/get-urls', (req, res) => {
-    res.json(products);
+    res.json(req.app.locals.products);
 });
 
-router.post('/add-url', (req, res) => {
-    const amazonUrl = req.body.amazonUrl;
-    const normalizedUrl = normalizeAmazonUrl(amazonUrl);
-
-    fetchProductDetails(normalizedUrl)
-        .then(product => {
-            const existingProduct = products.find(p => p.url === normalizedUrl);
-            if (existingProduct) {
-                return res.status(400).send('Product is already tracked');
-            }
-            products.push(product);
-            res.redirect('/');
-        })
-        .catch(err => {
-            console.error('Error fetching product details:', err);
-            res.status(500).send('Error adding product');
-        });
-});
-
+// Handle URL deletion
 router.delete('/delete-url/:index', (req, res) => {
-    const index = req.params.index;
+    const index = parseInt(req.params.index, 10);
+    const products = req.app.locals.products;
+
     if (index >= 0 && index < products.length) {
         products.splice(index, 1);
-        res.sendStatus(200);
+        res.status(200).send();
     } else {
-        res.sendStatus(404);
+        res.status(404).send('Product not found');
     }
+});
+
+// Display product page with details
+router.get('/:index', (req, res) => {
+    const index = parseInt(req.params.index, 10);
+    const product = req.app.locals.products[index];
+    if (!product) {
+        res.status(404).send('Product not found');
+        return;
+    }
+    res.render('product', { product });
 });
 
 module.exports = router;
