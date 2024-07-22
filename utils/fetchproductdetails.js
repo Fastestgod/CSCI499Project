@@ -3,21 +3,45 @@ const puppeteer = require('puppeteer');
 async function fetchProductDetails(url) {
     let browser = null;
     try {
-        browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        browser = await puppeteer.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu']
+        });
         const page = await browser.newPage();
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-        const title = await page.$eval('h1 span#productTitle', el => el.innerText.trim());
-        const price = await page.$eval('.a-offscreen', el => el.innerText.trim());
-        const imageUrl = await page.$eval('#landingImage', img => img.src);
-        const primePrice = await page.evaluate(() => {
-            const primePriceElement = document.querySelector('a[data-benefit-optimization-id="PrimeExclusiveMario"] .a-size-base');
-            if (primePriceElement) {
-                const primePriceText = primePriceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
-                return parseFloat(primePriceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
+        // Disable images and CSS to speed up page load
+        await page.setRequestInterception(true);
+        page.on('request', request => {
+            if (request.url().endsWith('.png') || request.url().endsWith('.jpg') || request.url().endsWith('.css')) {
+                request.abort();
+            } else {
+                request.continue();
             }
-            return null;
-        }) || price;
+        });
+
+        await page.goto(url, { waitUntil: 'networkidle0' });
+
+        let title, price, imageUrl, primePrice;
+
+        try {
+            title = await page.$eval('h1 span#productTitle', el => el.innerText.trim());
+            price = await page.$eval('.a-offscreen', el => el.innerText.trim());
+            imageUrl = await page.$eval('#landingImage', img => img.src);
+            primePrice = await page.evaluate(() => {
+                const primePriceElement = document.querySelector('a[data-benefit-optimization-id="PrimeExclusiveMario"] .a-size-base');
+                if (primePriceElement) {
+                    const primePriceText = primePriceElement.innerText.trim().match(/[$]?[0-9,.]+/)[0];
+                    return parseFloat(primePriceText.replace(/[^0-9.-]+/g, "")).toFixed(2);
+                }
+                return null;
+            }) || price;
+        } catch (e) {
+            // Handle if the product is not found on Amazon
+            title = await page.$eval('h1.heading-5.v-fw-regular', el => el.innerText.trim());
+            price = await page.$eval('.priceView-hero-price.priceView-customer-price span', el => el.innerText.trim());
+            imageUrl = await page.$eval('.primary-image.max-w-full.max-h-full', img => img.src);
+            primePrice = price; // Assuming there is no Prime equivalent on Best Buy
+        }
 
         return { title, price, primePrice, imageUrl };
     } catch (error) {
