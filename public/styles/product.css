@@ -67,9 +67,10 @@ header .logo img {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     margin-top: 20px;
+    gap: 10px; /* Add some spacing between buttons */
 }
-
 .buy-now-button {
     padding: 15px 30px;
     background-color: red;

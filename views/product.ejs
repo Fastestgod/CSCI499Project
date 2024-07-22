@@ -34,7 +34,10 @@
                     <% } %>
                 <% }); %>
                 <div class="buy-now-button-container">
-                    <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy Now</a>
+                    <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy on <%= product.store %></a>
+                    <% product.stores.forEach(store => { %>
+                        <a href="<%= store.url %>" target="_blank" class="buy-now-button">Buy on <%= store.store %></a>
+                    <% }); %>
                 </div>
                 <button id="addStoreButton">Add Store</button>
                 <form id="storeUrlForm" action="/products/add-store-url/<%= productIndex %>" method="post" style="display:none;">
