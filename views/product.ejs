@@ -44,7 +44,6 @@
                     <input type="text" name="storeUrl" placeholder="Enter Store URL" required>
                     <button type="submit">Add Store</button>
                 </form>
-                </div>
             </div>
         </div>
         <div class="price-history">
@@ -52,7 +51,13 @@
             <p>Last Updated: <%= product.lastUpdated %></p>
             <ul>
                 <% product.history.forEach(entry => { %>
-                    <li>Time: <%= entry.time %>, Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %></li>
+                    <li>Time: <%= entry.time %>, 
+                    <% if (entry.store === 'Amazon') { %>
+                        Amazon Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %>
+                    <% } else if (entry.store === 'Best Buy') { %>
+                        Best Buy Price: <%= entry.price %>
+                    <% } %>
+                    </li>
                 <% }) %>
             </ul>
         </div>
@@ -68,12 +73,19 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchUrls();
+            fetchUrls().catch(error => console.error('Error fetching URLs:', error));
 
             async function fetchUrls() {
-                const response = await fetch('/products/get-urls');
-                const products = await response.json();
-                updateProductList(products);
+                try {
+                    const response = await fetch('/products/get-urls');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const products = await response.json();
+                    updateProductList(products);
+                } catch (error) {
+                    console.error('Error fetching URLs:', error);
+                }
             }
 
             function updateProductList(products) {
@@ -97,10 +109,14 @@
             }
 
             async function removeUrl(index) {
-                await fetch(`/products/delete-url/${index}`, {
-                    method: 'DELETE',
-                });
-                fetchUrls();
+                try {
+                    await fetch(`/products/delete-url/${index}`, {
+                        method: 'DELETE',
+                    });
+                    fetchUrls().catch(error => console.error('Error fetching URLs after deletion:', error));
+                } catch (error) {
+                    console.error('Error deleting URL:', error);
+                }
             }
         });
     </script>
