@@ -4,42 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
-    <link rel="stylesheet" href="/styles/main.css">
     <link rel="stylesheet" href="/styles/product.css">
 </head>
 <body>
-    <header>
-        <a href="/" class="logo">
-            <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo">
-        </a>
-    </header>
-    <div class="container product-container">
-        <div class="product-image">
-            <img src="<%= product.imageUrl %>" alt="Product Image">
-            <div class="price-history">
-                <h2>Price History</h2>
-                <p>Last Updated: <%= product.lastUpdated %></p>
-                <ul>
-                    <% product.history.forEach(entry => { %>
-                        <li>Time: <%= entry.time %>, Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %></li>
-                    <% }) %>
-                </ul>
+    <div class="container">
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo">
+            </a>
+        </header>
+        <div class="product-container">
+            <div class="product-image">
+                <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+            </div>
+            <div class="product-details">
+                <h1 class="product-title"><%= product.title %></h1>
+                <% if (product.store === 'Amazon') { %>
+                    <div class="price-box">Amazon Price: <%= product.price %></div>
+                    <div class="price-box">Prime Price: <%= product.primePrice %></div>
+                <% } else if (product.store === 'Best Buy') { %>
+                    <div class="price-box">Best Buy Price: <%= product.price %></div>
+                <% } %>
+                <% product.stores.forEach(store => { %>
+                    <% if (store.store === 'Amazon') { %>
+                        <div class="price-box">Amazon Price: <%= store.price %></div>
+                        <div class="price-box">Prime Price: <%= store.primePrice %></div>
+                    <% } else if (store.store === 'Best Buy') { %>
+                        <div class="price-box">Best Buy Price: <%= store.price %></div>
+                    <% } %>
+                <% }); %>
+                <div class="buy-now-button-container">
+                    <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy Now</a>
+                </div>
+                <button id="addStoreButton">Add Store</button>
+                <form id="storeUrlForm" action="/products/add-store-url/<%= productIndex %>" method="post" style="display:none;">
+                    <input type="text" name="storeUrl" placeholder="Enter Store URL" required>
+                    <button type="submit">Add Store</button>
+                </form>
+                </div>
             </div>
         </div>
-        <div class="product-details">
-            <div class="product-title"><%= product.title %></div>
-            <div class="price-box">Amazon Price: <%= product.price %></div>
-            <div class="price-box">Prime Price: <%= product.primePrice %></div>
-            <div class="buy-now-button-container">
-                <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy Now</a>
-            </div>
+        <div class="price-history">
+            <h2>Price History</h2>
+            <p>Last Updated: <%= product.lastUpdated %></p>
+            <ul>
+                <% product.history.forEach(entry => { %>
+                    <li>Time: <%= entry.time %>, Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %></li>
+                <% }) %>
+            </ul>
         </div>
-    </div>
-    <div class="tracked-products">
-        <h2>Tracked Products</h2>
-        <ul id="urlList"></ul>
+        <div class="tracked-products">
+            <h2>Tracked Products</h2>
+            <ul id="urlList"></ul>
+        </div>
     </div>
     <script>
+        document.getElementById('addStoreButton').addEventListener('click', function() {
+            const form = document.getElementById('storeUrlForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchUrls();
 

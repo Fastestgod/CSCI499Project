@@ -32,9 +32,9 @@ header .logo img {
 }
 
 .product-image img {
-    width: 100%; /* Ensure image scales with its container */
-    height: auto; /* Maintain aspect ratio */
-    object-fit: contain; /* Ensure the image fits within the specified dimensions */
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 .product-details {
@@ -59,8 +59,8 @@ header .logo img {
     font-weight: bold;
     color: #333;
     margin-left: 70px;
-    border-radius: 10px; /* Optional: adds rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: adds a slight shadow */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .buy-now-button-container {
@@ -96,7 +96,51 @@ header .logo img {
     margin-bottom: 10px;
 }
 
-/* Tracked products list styles */
+#addStoreButton {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#addStoreButton:hover {
+    background-color: #003d80;
+}
+
+#storeUrlForm {
+    margin-top: 20px;
+}
+
+#storeUrlForm input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 130px);
+    margin-right: 10px;
+}
+
+#storeUrlForm button {
+    padding: 10px 20px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#storeUrlForm button:hover {
+    background-color: #003d80;
+}
+
 .tracked-products {
     margin-top: 40px;
     text-align: center;
@@ -132,11 +176,11 @@ ul#urlList li a:hover {
 }
 
 .delete-button:hover {
-    background: none; /* Ensures no background color on hover */
+    background: none;
 }
 
 .delete-icon {
-    width: 20px; /* Adjust size as needed */
+    width: 20px;
     height: 20px;
     cursor: pointer;
     margin-left: 10px;
