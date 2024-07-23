@@ -37,7 +37,7 @@ async function fetchProductDetails(url) {
             }) || price;
             store = 'Amazon';
         } else if (url.includes('bestbuy.com')) {
-            title = await page.$eval('h1.heading-5.v-fw-regular', el => el.innerText.trim());
+            title = await page.$eval('.sku-title', el => el.innerText.trim());
             price = await page.$eval('.priceView-hero-price.priceView-customer-price span', el => el.innerText.trim());
             imageUrl = await page.$eval('.primary-image.max-w-full.max-h-full', img => img.src);
             primePrice = price; // Assuming there is no Prime equivalent on Best Buy
