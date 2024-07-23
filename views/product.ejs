@@ -40,9 +40,9 @@
                     <% }); %>
                 </div>
                 <button id="addStoreButton">Add Store</button>
-                <form id="storeUrlForm" action="/products/add-store-url/<%= productIndex %>" method="post" style="display:none;">
-                    <input type="text" name="storeUrl" placeholder="Enter Store URL" required>
-                    <button type="submit">Add Store</button>
+                <form id="storeUrlForm" action="/products/add-store-url/<%= productIndex %>" method="post" style="display:none;" onsubmit="showLoadingPopup()">
+                    <input type="text" name="storeUrl" placeholder="Enter Product URL" required>
+                    <button type="submit">Add URL</button>
                 </form>
             </div>
         </div>
@@ -66,6 +66,14 @@
             <ul id="urlList"></ul>
         </div>
     </div>
+    
+    <!-- Loading Overlay and Popup -->
+    <div id="loadingOverlay" class="loading-overlay"></div>
+    <div id="loadingPopup" class="loading-popup">
+        <div class="lds-dual-ring"></div>
+        <p>Fetching Product Details...</p>
+    </div>
+
     <script>
         document.getElementById('addStoreButton').addEventListener('click', function() {
             const form = document.getElementById('storeUrlForm');
@@ -119,6 +127,12 @@
                 }
             }
         });
+
+        function showLoadingPopup() {
+            document.getElementById('loadingOverlay').style.display = 'block';
+            document.getElementById('loadingPopup').style.display = 'block';
+            document.body.classList.add('dimmed');
+        }
     </script>
 </body>
 </html>

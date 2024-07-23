@@ -15,7 +15,7 @@
         </header>
         <section class="search-section">
             <p>Start Searching</p>
-            <form id="urlForm" action="/products/add-url" method="post">
+            <form id="urlForm" action="/products/add-url" method="post" onsubmit="showLoadingPopup()">
                 <input type="text" id="storeUrl" name="storeUrl" placeholder="Enter Product URL" required>
                 <button type="submit">Add URL</button>
             </form>
@@ -38,6 +38,14 @@
             </div>
         </div>
     </div>
+    
+    <!-- Loading Overlay and Popup -->
+    <div id="loadingOverlay" class="loading-overlay"></div>
+    <div id="loadingPopup" class="loading-popup">
+        <div class="lds-dual-ring"></div>
+        <p>Fetching Product Details...</p>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetchUrls();
@@ -96,6 +104,12 @@
 
             setInterval(showNextItem, 5000); // Change image every 7 seconds
         });
+
+        function showLoadingPopup() {
+            document.getElementById('loadingOverlay').style.display = 'block';
+            document.getElementById('loadingPopup').style.display = 'block';
+            document.body.classList.add('dimmed');
+        }
     </script>
 </body>
 </html>
