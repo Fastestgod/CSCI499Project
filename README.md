@@ -11,6 +11,7 @@ PriceWatch keeps track of a product's price with the simple click of a button. A
 Current websites supported:
 
 * Amazon
+* Best Buy
 
 ## How to Run and Start the Server
 
