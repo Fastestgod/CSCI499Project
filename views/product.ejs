@@ -6,6 +6,7 @@
     <title>Product Details</title>
     <link rel="stylesheet" href="/styles/product.css">
     <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -73,6 +74,7 @@
                     </li>
                 <% }) %>
             </ul>
+            <canvas id="priceChart"></canvas>
         </div>
         <div class="tracked-products">
             <h2>Tracked Products</h2>
@@ -95,6 +97,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchUrls().catch(error => console.error('Error fetching URLs:', error));
+            renderPriceChart();
 
             async function fetchUrls() {
                 try {
@@ -138,6 +141,69 @@
                 } catch (error) {
                     console.error('Error deleting URL:', error);
                 }
+            }
+
+            function renderPriceChart() {
+                const ctx = document.getElementById('priceChart').getContext('2d');
+                const times = <%- JSON.stringify(product.history.map(entry => entry.time)) %>;
+                const amazonPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const primePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.primePrice.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: times,
+                        datasets: [
+                            {
+                                label: 'Amazon Price',
+                                data: amazonPrices,
+                                borderColor: 'blue',
+                                fill: false,
+                            },
+                            {
+                                label: 'Prime Price',
+                                data: primePrices,
+                                borderColor: 'green',
+                                fill: false,
+                            },
+                            {
+                                label: 'Best Buy Price',
+                                data: bestBuyPrices,
+                                borderColor: 'red',
+                                fill: false,
+                            }
+                        ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Price Data'
+                        },
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    unit: 'minute',
+                                    tooltipFormat: 'll HH:mm',
+                                    displayFormats: {
+                                        'minute': 'HH:mm'
+                                    }
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Time'
+                                }
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Price ($)'
+                                }
+                            }]
+                        }
+                    }
+                });
             }
         });
 

@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const cron = require('node-cron');
-const fetchProductDetails = require('./utils/fetchProductDetails');
+const fetchProductDetails = require('./utils/fetchproductdetails');
 const indexRoutes = require('./routes/index');
 const productRoutes = require('./routes/products');
 
@@ -21,7 +21,7 @@ let products = [];
 app.locals.products = products;  // Make products accessible in routes
 
 // Schedule the price update function to run every 15 minutes
-cron.schedule('*/15 * * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     await updatePrices(products);
 });
 
@@ -38,7 +38,18 @@ async function updatePrices(products) {
                 product.price = price;
                 product.primePrice = primePrice;
                 product.lastUpdated = now;
-                product.history.push({ time: now, price, primePrice });
+                product.history.push({ time: now, price, primePrice, store: product.store });
+
+                // Update each additional store's price
+                for (const store of product.stores) {
+                    const storeDetails = await fetchProductDetails(store.url);
+                    if (!storeDetails.error) {
+                        store.price = storeDetails.price;
+                        store.primePrice = storeDetails.primePrice;
+                        store.lastUpdated = now;
+                        product.history.push({ time: now, price: storeDetails.price, primePrice: storeDetails.primePrice, store: store.store });
+                    }
+                }
             }
         } catch (error) {
             console.error(`Error updating product: ${product.url}, ${error.message}`);

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const fetchProductDetails = require('../utils/fetchProductDetails');
+const fetchProductDetails = require('../utils/fetchproductdetails');
 
 // Add URL to the list and fetch initial product details
 router.post('/add-url', async (req, res) => {
@@ -21,7 +21,7 @@ router.post('/add-url', async (req, res) => {
             return;
         }
         const now = new Date().toLocaleString();
-        const history = [{ time: now, price, primePrice }];
+        const history = [{ time: now, price, primePrice, store }];
         products.push({ url, title, price, primePrice, imageUrl, store, lastUpdated: now, history, stores: [] });
         const newProductIndex = products.length - 1;
         res.redirect(`/products/${newProductIndex}`);
@@ -30,7 +30,6 @@ router.post('/add-url', async (req, res) => {
         res.redirect(`/?error=${encodeURIComponent('Internal Server Error')}`);
     }
 });
-
 
 router.post('/add-store-url/:index', async (req, res) => {
     const index = parseInt(req.params.index, 10);
@@ -58,13 +57,13 @@ router.post('/add-store-url/:index', async (req, res) => {
         }
         const now = new Date().toLocaleString();
         product.stores.push({ url: storeUrl, price, primePrice, store, lastUpdated: now });
+        product.history.push({ time: now, price, primePrice, store }); // Add store name to history
         res.redirect(`/products/${index}`);
     } catch (error) {
         console.error(`Error adding store URL: ${error.message}`);
         res.redirect(`/products/${index}?error=${encodeURIComponent('Internal Server Error')}`);
     }
 });
-
 
 // Get the list of URLs
 router.get('/get-urls', (req, res) => {
