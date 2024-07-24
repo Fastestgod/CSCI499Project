@@ -65,6 +65,14 @@ header .logo img {
     margin-left: 70px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Spacing between logo and text */
+}
+
+.store-logo {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
 }
 
 .buy-now-button-container {

@@ -21,17 +21,29 @@
             <div class="product-details">
                 <h1 class="product-title"><%= product.title %></h1>
                 <% if (product.store === 'Amazon') { %>
-                    <div class="price-box">Amazon Price: <%= product.price %></div>
-                    <div class="price-box">Prime Price: <%= product.primePrice %></div>
+                    <div class="price-box">
+                        <img src="/images/amazon.png" alt="Amazon Logo" class="store-logo"> Amazon Price: <%= product.price %>
+                    </div>
+                    <div class="price-box">
+                        <img src="/images/amazon.png" alt="Amazon Logo" class="store-logo"> Prime Price: <%= product.primePrice %>
+                    </div>
                 <% } else if (product.store === 'Best Buy') { %>
-                    <div class="price-box">Best Buy Price: <%= product.price %></div>
+                    <div class="price-box">
+                        <img src="/images/bestbuy.png" alt="Best Buy Logo" class="store-logo"> Best Buy Price: <%= product.price %>
+                    </div>
                 <% } %>
                 <% product.stores.forEach(store => { %>
                     <% if (store.store === 'Amazon') { %>
-                        <div class="price-box">Amazon Price: <%= store.price %></div>
-                        <div class="price-box">Prime Price: <%= store.primePrice %></div>
+                        <div class="price-box">
+                            <img src="/images/amazon.png" alt="Amazon Logo" class="store-logo"> Amazon Price: <%= store.price %>
+                        </div>
+                        <div class="price-box">
+                            <img src="/images/amazon.png" alt="Amazon Logo" class="store-logo"> Prime Price: <%= store.primePrice %>
+                        </div>
                     <% } else if (store.store === 'Best Buy') { %>
-                        <div class="price-box">Best Buy Price: <%= store.price %></div>
+                        <div class="price-box">
+                            <img src="/images/bestbuy.png" alt="Best Buy Logo" class="store-logo"> Best Buy Price: <%= store.price %>
+                        </div>
                     <% } %>
                 <% }); %>
                 <div class="buy-now-button-container">
