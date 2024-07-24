@@ -7,28 +7,31 @@ router.post('/add-url', async (req, res) => {
     const url = req.body.storeUrl;
     const products = req.app.locals.products;
 
-    if (products.some(product => product.url === url)) {
-        res.send('Product already exists in the list');
+    // Check if the product already exists in the list
+    const existingProductIndex = products.findIndex(product => product.url === url);
+    if (existingProductIndex !== -1) {
+        res.redirect(`/products/${existingProductIndex}`);
         return;
     }
 
     try {
         const { title, price, primePrice, imageUrl, store, error } = await fetchProductDetails(url);
         if (error) {
-            res.send(`Error fetching product details: ${error}`);
+            res.redirect(`/?error=${encodeURIComponent(`Error fetching product details: ${error}`)}`);
             return;
         }
         const now = new Date().toLocaleString();
         const history = [{ time: now, price, primePrice }];
         products.push({ url, title, price, primePrice, imageUrl, store, lastUpdated: now, history, stores: [] });
-        res.redirect('/');
+        const newProductIndex = products.length - 1;
+        res.redirect(`/products/${newProductIndex}`);
     } catch (error) {
         console.error(`Error adding URL: ${error.message}`);
-        res.status(500).send('Internal Server Error');
+        res.redirect(`/?error=${encodeURIComponent('Internal Server Error')}`);
     }
 });
 
-// Add a store URL to an existing product
+
 router.post('/add-store-url/:index', async (req, res) => {
     const index = parseInt(req.params.index, 10);
     const storeUrl = req.body.storeUrl;
@@ -40,10 +43,17 @@ router.post('/add-store-url/:index', async (req, res) => {
         return;
     }
 
+    // Check if the store URL already exists for the product
+    const storeExists = product.stores.some(store => store.url === storeUrl);
+    if (storeExists) {
+        res.redirect(`/products/${index}`);
+        return;
+    }
+
     try {
         const { price, primePrice, store, error } = await fetchProductDetails(storeUrl);
         if (error) {
-            res.send(`Error fetching store details: ${error}`);
+            res.redirect(`/products/${index}?error=${encodeURIComponent(error)}`);
             return;
         }
         const now = new Date().toLocaleString();
@@ -51,9 +61,10 @@ router.post('/add-store-url/:index', async (req, res) => {
         res.redirect(`/products/${index}`);
     } catch (error) {
         console.error(`Error adding store URL: ${error.message}`);
-        res.status(500).send('Internal Server Error');
+        res.redirect(`/products/${index}?error=${encodeURIComponent('Internal Server Error')}`);
     }
 });
+
 
 // Get the list of URLs
 router.get('/get-urls', (req, res) => {
