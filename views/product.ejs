@@ -150,10 +150,12 @@
                 const primePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.primePrice.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
 
+                const uniqueTimes = Array.from(new Set(times));
+
                 new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: times,
+                        labels: uniqueTimes,
                         datasets: [
                             {
                                 label: 'Amazon Price',
