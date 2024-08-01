@@ -12,43 +12,41 @@ body, html {
 .navbar {
     position: fixed;
     top: 0;
-    left: 0;
     width: 100%;
     background-color: #333;
     color: white;
-    padding: 20px 20px;
-    z-index: 1000;
-
+    margin: 0;
+    padding: 0;
 }
 
 .navbar-links {
     list-style: none;
     display: flex;
-    justify-content: left;
-    align-items: center; /* Center items vertically */
+    align-items: center; 
     padding: 0;
     margin: 0;
     gap: 40px;
-}
-
-.navbar-links li {
     margin-left: 20px;
 }
+
 
 .navbar-links a {
     color: white;
     text-decoration: none;
     font-size: 1.5rem;
+    display: block; 
+    height: 100%; 
+    padding: 20px 20px; 
+    font-weight: bold;
 }
 
 .navbar-links a:hover {
-    background: #ddd;
-    color: black;
+    color: rgba(253, 165, 0, 0.959);
 }
 
 .navbar-links img {
-    height: 50px; /* Adjust the height as needed */
-    width: auto;  /* Maintain aspect ratio */
+    height: 50px; 
+    width: auto; 
 }
 
 .container {
