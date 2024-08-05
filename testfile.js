@@ -29,7 +29,7 @@ const puppeteer = require('puppeteer');
         // Use a regular expression to extract the numeric value
         //const priceMatch = priceText.match(/[\d.,]+/);
         //const price = priceMatch ? priceMatch[0] : null;
-        const price = await page.$eval('span[itemprop="price"][aria-hidden="false"]', element => element.innerText.trim());
+        const price = await page.$eval('h1#main-title', element => element.innerText.trim());
 
         
         console.log('Price:', price);

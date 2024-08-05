@@ -1,0 +1,145 @@
+body, html {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('../images/gradient.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    align-items: center; 
+    padding: 0;
+    margin: 0;
+    gap: 40px;
+    margin-left: 20px;
+}
+
+.navbar-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    display: block; 
+    height: 100%; 
+    padding: 20px 20px; 
+    font-weight: bold;
+}
+
+.navbar-links a:hover {
+    color: rgba(253, 165, 0, 0.959);
+}
+
+.navbar-links img {
+    height: 50px; 
+    width: auto; 
+}
+
+.container {
+    width: 100%;
+    margin: 80px auto 0 auto;
+    margin-top: 120px;
+    align-items: center; 
+}
+
+header {
+    text-align: center;
+}
+
+h1 {
+    font-size: 3rem;
+    color: black;
+    margin-top: 10px;
+}
+
+p {
+    font-size: 1.4rem;
+    color: rgb(27, 27, 27);
+    margin-left: 350px;
+    margin-right: 350px;
+}
+
+.picture {
+    max-width: 900px; 
+    max-height: 900px;
+    margin: 20px 0;
+}
+
+h2 {
+    margin-top: 150px;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-left: 300px;
+    position: relative;
+    display: inline-block;
+}
+
+h2::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: black;
+    margin-top: 10px; /* Adjust this value to control the space between the text and the underline */
+}
+
+.features {
+    display: flex;
+    flex-direction: column;
+    gap: 300px;
+    margin-top: 50px;
+    align-items: center;
+}
+
+.feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    width: 80%;
+    margin-left: 300px;
+    margin-right: 300px;
+}
+
+.feature-reverse {
+    flex-direction: row-reverse;
+}
+
+.feature-text {
+    flex: 1;
+    text-align: left;
+}
+
+.feature-image {
+    flex: 1;
+    text-align: center;
+}
+
+.feature-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+h3 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+    margin-left: 220px;
+}
+
+.feature p {
+    font-size: 1.3rem;
+    color: rgb(27, 27, 27);
+    margin-top: 0;
+}

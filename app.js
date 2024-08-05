@@ -25,6 +25,11 @@ app.use(bodyParser.json());
 app.use('/', indexRoutes);          // Route for index page
 app.use('/products', productRoutes); // Route for products
 
+// Add this route for the about page
+app.get('/about', (req, res) => {
+    res.render('about');
+});
+
 // Initialize an empty array to store products
 let products = [];
 app.locals.products = products;  // Make products accessible in routes
