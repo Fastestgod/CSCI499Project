@@ -1,9 +1,9 @@
-const puppeteer = require('puppeteer');
+/*const puppeteer = require('puppeteer');
 
 // Function to fetch product details based on the URL
 (async () => {
-    const url = 'https://www.walmart.com/ip/T-Mobile-Unlocked-Android-Phones-XGODY-AT-T-Cell-Phones-Smartphones-6-52-Incell-Screen-15MP-8MP-4G-LTE-Dual-SIM-4500mAh-2GB-RAM-32GB-ROM-Face-Unlocki/5208897455?athcpid=5208897455&athpgid=AthenaItempage&athcgid=null&athznid=utic&athieid=v0&athstid=CS020&athguid=NqxcRFt6UK-3SLWiimBXATZrrray2MoeY6D0&athancid=7069923990&athena=true';
-    try {
+    const url = 'https://www.target.com/p/avatar-frontiers-of-pandora-special-edition-xbox-series-x/-/A-89382883#lnk=sametab';
+     try {
         browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu']
@@ -20,7 +20,7 @@ const puppeteer = require('puppeteer');
             }
         });
 
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        
 
         // Extract product details
         
@@ -29,7 +29,7 @@ const puppeteer = require('puppeteer');
         // Use a regular expression to extract the numeric value
         //const priceMatch = priceText.match(/[\d.,]+/);
         //const price = priceMatch ? priceMatch[0] : null;
-        const price = await page.$eval('h1#main-title', element => element.innerText.trim());
+        const price = await page.$eval('span[itemprop="price"][aria-hidden="false"]', element => element.innerText.trim());
 
         
         console.log('Price:', price);
@@ -42,4 +42,26 @@ const puppeteer = require('puppeteer');
             await browser.close();
         }
     }
+})();
+*/
+const puppeteer = require('puppeteer');
+
+(async () => {
+  // Launch a headless browser
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  // Navigate to the Target product page
+  await page.goto('https://www.target.com/p/avatar-frontiers-of-pandora-special-edition-xbox-series-x/-/A-89382883#lnk=sametab');
+
+  // Wait for the price element to load
+  await page.waitForSelector('span[data-test="product-price"]');
+
+  // Extract the price text
+  const price = await page.$eval('span[data-test="product-price"]', el => el.textContent.trim());
+
+  console.log(price); // Output: $69.99
+
+  // Close the browser
+  await browser.close();
 })();
