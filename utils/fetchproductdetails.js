@@ -28,8 +28,16 @@ async function fetchProductDetails(url) {
             return await trackAmazon(page);
         } else if (url.includes('bestbuy.com')) {
             return await trackBestBuy(page);
-        } else if (url.includes("walmart.com")){
-            return await trackWalmart(Page);
+        } else if (url.includes('walmart.com')){
+            return await trackWalmart(page);
+        }
+        else if (url.includes('target.com')){
+            const price = await page.$eval('span[data-test="product-price"]', el => el.textContent.trim());
+            const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
+            const primePrice = price; // Assuming there is no Prime equivalent on Walmaer
+            const store = 'target';
+            const title = 'hi';   
+        
         }
         else{
             throw new Error('Unsupported store');
@@ -80,4 +88,14 @@ async function trackWalmart(page) {
     const store = 'walmart';
     return { title, price, primePrice, imageUrl, store };
 }
+async function trackTarget(page) {
+    //const title = await page.$eval('span[itemprop="name"][aria-hidden="false"]', element => element.innerText);
+    const price = await page.$eval('span[data-test="product-price"]', el => el.textContent.trim());
+    const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Walmaer
+    const store = 'target';
+    const title = 'hi';
+    return { title, price, primePrice, imageUrl, store };
+}
+
 module.exports = fetchProductDetails;
