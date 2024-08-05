@@ -9,9 +9,50 @@ body, html {
     background-attachment: fixed; 
 }
 
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    align-items: center; 
+    padding: 0;
+    margin: 0;
+    gap: 40px;
+    margin-left: 20px;
+}
+
+
+.navbar-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    display: block; 
+    height: 100%; 
+    padding: 20px 20px; 
+    font-weight: bold;
+}
+
+.navbar-links a:hover {
+    color: rgba(253, 165, 0, 0.959);
+}
+
+.navbar-links img {
+    height: 50px; 
+    width: auto; 
+}
+
 .container {
     width: 80%;
-    margin: 0 auto;
+    margin: 80px auto 0 auto;
+    margin-top: 120px;
 }
 
 header {

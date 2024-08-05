@@ -9,12 +9,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
+    <nav class="navbar">
+        <ul class="navbar-links">
+            <li><img src="/images/pricewatchlogo.png" alt="PriceWatch Logo"></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="#">Tracked Products</a></li>
+            <li><a href="#">About PriceWatch</a></li>
+        </ul>
+    </nav>
+
     <div class="container">
-        <header>
-            <a href="/" class="logo">
-                <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo">
-            </a>
-        </header>
         <div class="product-container">
             <div class="product-image">
                 <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
