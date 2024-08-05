@@ -21,5 +21,5 @@ Current websites supported:
    * `npm i express`
    * `npm i node-cron`
    * `npm i ejs`
-4. Start server using command `node index.js`
+4. Start server using command `node app.js`
 5. Access the website in your browser at `http://localhost:3000`
