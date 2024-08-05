@@ -30,15 +30,9 @@ async function fetchProductDetails(url) {
             return await trackBestBuy(page);
         } else if (url.includes('walmart.com')){
             return await trackWalmart(page);
-        }
-        else if (url.includes('target.com')){
-            const price = await page.$eval('span[data-test="product-price"]', el => el.textContent.trim());
-            const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
-            const primePrice = price; // Assuming there is no Prime equivalent on Walmaer
-            const store = 'target';
-            const title = 'hi';   
-        
-        }
+        } else if (url.includes('target.com')){
+            return await trackTarget(page);
+      }
         else{
             throw new Error('Unsupported store');
         }
@@ -80,22 +74,22 @@ async function trackBestBuy(page) {
 
     return { title, price, primePrice, imageUrl, store };
 }
-async function trackWalmart(page) {
+ async function trackWalmart(page) {
     const title = await page.$eval('span[itemprop="name"][aria-hidden="false"]', element => element.innerText);
     const price = await page.$eval('span[itemprop="price"][aria-hidden="false"]', element => element.innerText);
     const imageUrl = await page.$eval('img[alt="'+ title + '"]', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Walmaer
     const store = 'walmart';
     return { title, price, primePrice, imageUrl, store };
-}
+} 
+
 async function trackTarget(page) {
-    //const title = await page.$eval('span[itemprop="name"][aria-hidden="false"]', element => element.innerText);
-    const price = await page.$eval('span[data-test="product-price"]', el => el.textContent.trim());
-    const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
-    const primePrice = price; // Assuming there is no Prime equivalent on Walmaer
-    const store = 'target';
-    const title = 'hi';
-    return { title, price, primePrice, imageUrl, store };
-}
+        const title = await page.$eval('h1#pdp-product-title-id', el => el.innerText.trim());
+        const price = await page.$eval('.sc-32969646-0.koXXfQ span', el => el.innerText.trim());
+        const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
+        const primePrice = price; // Assuming there is no Prime equivalent on Target
+        const store = 'Target';
+        return { title, price, primePrice, imageUrl, store };
+    }
 
 module.exports = fetchProductDetails;
