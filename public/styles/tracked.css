@@ -1,0 +1,150 @@
+body, html {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('../images/gradient.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    text-align: center;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    align-items: center; 
+    padding: 0;
+    margin: 0;
+    gap: 40px;
+    margin-left: 20px;
+}
+
+.navbar-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    display: block; 
+    height: 100%; 
+    padding: 20px 20px; 
+    font-weight: bold;
+}
+
+.navbar-links a:hover {
+    color: rgba(253, 165, 0, 0.959);
+}
+
+.navbar-links img {
+    height: 50px; 
+    width: auto; 
+}
+
+.container {
+    width: 80%;
+    margin: 80px auto 0 auto;
+}
+
+h2 {
+    margin-top: 120px;
+    font-size: 3rem;
+    text-align: center;
+}
+
+.sort-options {
+    text-align: center;
+    margin: 20px 0;
+    margin-bottom: 20px;
+}
+
+.sort-options span {
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.sort-options button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    transition: background-color 0.3s;
+}
+
+.sort-options button:hover {
+    background-color: #ccc;
+}
+
+#searchBar {
+    width: 50%;
+    padding: 10px;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+ul#urlList {
+    list-style: none;
+    padding: 0;
+}
+
+ul#urlList li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+ul#urlList li a {
+    text-decoration: none;
+    color: #0056b3;
+    font-size: 1.4rem;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+ul#urlList li a:hover {
+    text-decoration: underline;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-left: 15px;
+    vertical-align: middle;
+}
+
+.delete-button:hover {
+    background: none; 
+}
+
+.delete-icon {
+    width: 28px; 
+    height: 28px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+#noProductsMessage {
+    font-size: 1.4rem;
+    color: gray;
+    margin-top: 80px;
+}
+
+#noResultsMessage {
+    font-size: 1.4rem;
+    color: gray;
+    margin-top: 20px;
+}

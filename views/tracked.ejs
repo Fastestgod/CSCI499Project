@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <title>Tracked Products</title>
+    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/tracked.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <ul class="navbar-links">
+            <li><img src="/images/pricewatchlogo.png" alt="PriceWatch Logo"></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tracked">Tracked Products</a></li>
+            <li><a href="/about">About PriceWatch</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Tracked Products</h2>
+        <div class="sort-options">
+            <span>Sort by: </span>
+            <button onclick="sortProducts('date-desc')">Order Added (Oldest to Newest)</button>
+            <button onclick="sortProducts('date-asc')">Order Added (Newest to Oldest)</button>
+            <button onclick="sortProducts('title-asc')">A-Z</button>
+            <button onclick="sortProducts('title-desc')">Z-A</button>
+        </div>
+        <input type="text" id="searchBar" placeholder="Search for your tracked product" onkeyup="filterProducts()">
+        <p id="noProductsMessage" style="display: none;">No products are currently being tracked. Add some products to start tracking their prices!</p>
+        <p id="noResultsMessage" style="display: none;">No products found</p>
+        <ul id="urlList"></ul>
+    </div>
+
+    <script>
+        let products = [];
+
+        function sortProducts(criteria) {
+            let sortedProducts = [...products];
+            switch (criteria) {
+                case 'date-asc':
+                    sortedProducts.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded));
+                    break;
+                case 'date-desc':
+                    sortedProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                    break;
+                case 'title-asc':
+                    sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                case 'title-desc':
+                    sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
+                    break;
+            }
+            updateProductList(sortedProducts);
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filteredProducts = products.filter(product => product.title.toLowerCase().includes(query));
+            updateProductList(filteredProducts);
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            const noProductsMessage = document.getElementById('noProductsMessage');
+            if (filteredProducts.length === 0 && query.length > 0) {
+                noResultsMessage.style.display = 'block';
+                noProductsMessage.style.display = 'none';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUrls();
+
+            async function fetchUrls() {
+                const response = await fetch('/products/get-urls');
+                products = await response.json();
+                products.forEach((product, index) => {
+                    product.dateAdded = new Date().getTime() - index * 1000 * 60 * 60; // simulate different dates
+                });
+                updateProductList(products);
+            }
+
+            window.updateProductList = function(products) {
+                const urlList = document.getElementById('urlList');
+                const noProductsMessage = document.getElementById('noProductsMessage');
+                const noResultsMessage = document.getElementById('noResultsMessage');
+                urlList.innerHTML = '';
+                if (products.length === 0) {
+                    noProductsMessage.style.display = 'block';
+                    noResultsMessage.style.display = 'none'; // Hide noResultsMessage if the list is initially empty
+                } else {
+                    noProductsMessage.style.display = 'none';
+                    products.forEach((product, index) => {
+                        const listItem = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.href = `/products/${index}`;
+                        link.innerText = product.title;
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'delete-button';
+                        deleteButton.innerHTML = '<img src="/images/delete.png" alt="Delete" class="delete-icon">';
+                        deleteButton.onclick = () => removeUrl(index);
+
+                        listItem.appendChild(link);
+                        listItem.appendChild(deleteButton);
+                        urlList.appendChild(listItem);
+                    });
+                }
+            }
+
+            async function removeUrl(index) {
+                await fetch(`/products/delete-url/${index}`, {
+                    method: 'DELETE',
+                });
+                fetchUrls();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -25,6 +25,12 @@ app.use(bodyParser.json());
 app.use('/', indexRoutes);          // Route for index page
 app.use('/products', productRoutes); // Route for products
 
+
+// Add this route for the tracked products page
+app.get('/tracked', (req, res) => {
+    res.render('tracked');
+});
+
 // Add this route for the about page
 app.get('/about', (req, res) => {
     res.render('about');

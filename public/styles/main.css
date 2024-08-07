@@ -30,7 +30,6 @@ body, html {
     margin-left: 20px;
 }
 
-
 .navbar-links a {
     color: white;
     text-decoration: none;
@@ -142,50 +141,12 @@ button:hover {
     background-color: #003d80;
 }
 
-ul#urlList {
-    list-style: none;
-    padding: 0;
-}
-
-ul#urlList li {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-ul#urlList li a {
-    text-decoration: none;
-    color: #0056b3;
-}
-
-ul#urlList li a:hover {
-    text-decoration: underline;
-}
-
-.delete-button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-.delete-button:hover {
-    background: none; /* Ensures no background color on hover */
-}
-.delete-icon {
-    width: 20px; /* Adjust size as needed */
-    height: 20px;
-    cursor: pointer;
-    margin-left: 10px;
-    vertical-align: middle;
-}
-
 .carousel {
     position: relative;
     width: 100%;
     max-width: 600px;
-    height: 400px; /* Adjust height as needed */
-    margin: 120px auto 20px auto; /* Add top margin to move the carousel down */
+    height: 400px; 
+    margin: 120px auto 20px auto; 
     overflow: hidden;
 }
 
