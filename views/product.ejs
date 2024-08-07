@@ -37,7 +37,11 @@
                     <div class="price-box">
                         <img src="/images/bestbuy.png" alt="Best Buy Logo" class="store-logo"> Best Buy Price: <%= product.price %>
                     </div>
-                <% } else if (product.store === 'Target') { %>
+                <% } else if (product.store === 'Costco') { %>
+                    <div class="price-box">
+                        <img src="/images/costco.png" alt="Costco Logo" class="store-logo"> Costco Price: <%= product.price %>
+                    </div>
+                <% }  else if (product.store === 'Target') { %>
                     <div class="price-box">
                         <img src="/images/target.png" alt="Target Logo" class="store-logo"> Target Price: <%= product.price %>
                     </div>
@@ -53,6 +57,10 @@
                     <% } else if (store.store === 'Best Buy') { %>
                         <div class="price-box">
                             <img src="/images/bestbuy.png" alt="Best Buy Logo" class="store-logo"> Best Buy Price: <%= store.price %>
+                        </div>
+                    <% } else if (product.store === 'Costco') { %>
+                        <div class="price-box">
+                            <img src="/images/costco.png" alt="Costco Logo" class="store-logo"> Costco Price: <%= product.price %>
                         </div>
                     <% } else if (store.store === 'Target') { %>
                         <div class="price-box">
@@ -83,7 +91,9 @@
                         Amazon Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %>
                     <% } else if (entry.store === 'Best Buy') { %>
                         Best Buy Price: <%= entry.price %>
-                    <% } else if (entry.store === 'Target') { %>
+                    <% } else if (entry.store === 'Costco') { %>
+                        Costco Price: <%= entry.price %>
+                    <% }else if (entry.store === 'Target') { %>
                         Target Price: <%= entry.price %>
                     <% } %>
                     </li>
@@ -164,6 +174,7 @@
                 const amazonPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const primePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.primePrice.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const costcoPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Costco').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const targetPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Target').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
 
                 const uniqueTimes = Array.from(new Set(times));
@@ -189,6 +200,12 @@
                                 label: 'Best Buy Price',
                                 data: bestBuyPrices,
                                 borderColor: 'red',
+                                fill: false,
+                            },
+                            {
+                                label: 'Costco Price',
+                                data: costcoPrices,
+                                borderColor: 'purple',
                                 fill: false,
                             },
                             {
