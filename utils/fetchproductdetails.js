@@ -29,8 +29,10 @@ async function fetchProductDetails(url) {
             return await trackAmazon(page);
         } else if (url.includes('bestbuy.com')) {
             return await trackBestBuy(page);
+        } else if (url.includes('nike.com')){
+            return await trackNike(page);
         } else if (url.includes('costco.com')){
-            return await trackCostco(page);
+            return await trackCostco(page);    
         } else if (url.includes('target.com')){
             return await trackTarget(page);
       }
@@ -75,6 +77,17 @@ async function trackBestBuy(page) {
 
     return { title, price, primePrice, imageUrl, store };
 }
+// Function to fetch product details from Nike
+async function trackNike(page) {
+    const title = await page.$eval('h1#pdp_product_title', el => el.innerText.trim());
+    const price = await page.$eval('div#price-container span[data-testid="currentPrice-container"]', el => el.innerText.trim());
+    const imageUrl = await page.$eval('ul[data-testid="mobile-image-carousel-list"] li[data-testid="mobile-image-carousel-list-item"] img[data-testid="mobile-image-carousel-image"]', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Nike
+    const store = 'Nike';
+
+    return { title, price, primePrice, imageUrl, store };
+}
+
 // Function to fetch product details from Costco
 async function trackCostco(page) {
     const title = await page.$eval('h1[automation-id="productName"]', element => element.innerText);
