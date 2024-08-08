@@ -41,7 +41,11 @@
                     <div class="price-box">
                         <img src="/images/nike.png" alt="Nike Logo" class="store-logo"> Nike Price: <%= product.price %>
                     </div>
-                <% }  else if (product.store === 'Costco') { %>
+                <% } else if (product.store === 'Home Depot') { %>
+                    <div class="price-box">
+                        <img src="/images/homedepot.png" alt="Home Depot Logo" class="store-logo"> Home Depot Price: <%= product.price %>
+                    </div>
+                <% } else if (product.store === 'Costco') { %>
                     <div class="price-box">
                         <img src="/images/costco.png" alt="Costco Logo" class="store-logo"> Costco Price: <%= product.price %>
                     </div>
@@ -65,6 +69,10 @@
                     <% } else if (store.store === 'Nike') { %>
                         <div class="price-box">
                             <img src="/images/nike.png" alt="Nike Logo" class="store-logo"> Nike Price: <%= store.price %>
+                        </div>
+                    <% } else if (store.store === 'Home Depot') { %>
+                        <div class="price-box">
+                            <img src="/images/homedepot.png" alt="Home Depot Logo" class="store-logo"> Home Depot Price: <%= store.price %>
                         </div>
                     <% } else if (store.store === 'Costco') { %>
                         <div class="price-box">
@@ -99,8 +107,10 @@
                         Amazon Price: <%= entry.price %>, Prime Price: <%= entry.primePrice %>
                     <% } else if (entry.store === 'Best Buy') { %>
                         Best Buy Price: <%= entry.price %>
-                    <% }else if (entry.store === 'Nike') { %>
+                    <% } else if (entry.store === 'Nike') { %>
                         Nike Price: <%= entry.price %>
+                    <% } else if (entry.store === 'Home Depot') { %>
+                        Home Depot Price: <%= entry.price %>
                     <% } else if (entry.store === 'Costco') { %>
                         Costco Price: <%= entry.price %>
                     <% }else if (entry.store === 'Target') { %>
@@ -185,6 +195,7 @@
                 const primePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.primePrice.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const nikePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Nike').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const homedepotPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Home Depot').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const costcoPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Costco').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const targetPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Target').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
 
@@ -220,6 +231,12 @@
                                 fill: false,
                             },
                             {
+                                label: 'Home Depot Price',
+                                data: homedepotPrices,
+                                borderColor: 'orange',
+                                fill: false,
+                            },
+                            {
                                 label: 'Costco Price',
                                 data: costcoPrices,
                                 borderColor: 'purple',
@@ -228,7 +245,7 @@
                             {
                                 label: 'Target Price',
                                 data: targetPrices,
-                                borderColor: 'orange',
+                                borderColor: 'maroon',
                                 fill: false,
                             }
                         ]

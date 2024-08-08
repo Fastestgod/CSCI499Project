@@ -31,7 +31,9 @@ async function fetchProductDetails(url) {
             return await trackBestBuy(page);
         } else if (url.includes('nike.com')){
             return await trackNike(page);
-        } else if (url.includes('costco.com')){
+        }else if (url.includes('homedepot.com')){
+            return await trackHomedepot(page);   
+        }else if (url.includes('costco.com')){
             return await trackCostco(page);    
         } else if (url.includes('target.com')){
             return await trackTarget(page);
@@ -87,6 +89,19 @@ async function trackNike(page) {
 
     return { title, price, primePrice, imageUrl, store };
 }
+
+// Function to fetch product details from Home Depot
+async function trackHomedepot(page) {
+    const title = await page.$eval('.product-details__badge-title--wrapper h1.sui-h4-bold', element => element.innerText);
+    const dollars = await page.$eval('.price .price-format__main-price span:nth-child(2)', element => element.innerText);
+    const cents = await page.$eval('.price .price-format__main-price span:nth-child(4)', element => element.innerText);
+    const price = `$${dollars}.${cents}`;
+    const imageUrl = await page.$eval('.mediagallery__mainimage img', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Home Depot
+    const store = 'Home Depot';
+    return { title, price, primePrice, imageUrl, store };
+}
+
 
 // Function to fetch product details from Costco
 async function trackCostco(page) {
