@@ -105,13 +105,27 @@ async function trackHomedepot(page) {
 
 // Function to fetch product details from Costco
 async function trackCostco(page) {
+    // Extract product title
     const title = await page.$eval('h1[automation-id="productName"]', element => element.innerText);
-    const price = await page.$eval('.op-value[automation-id="onlinePriceOutput"]', element => element.innerText);
-    const imageUrl = await page.$eval('.zoomImg_container img', img => img.src);
-    const primePrice = price; // Assuming there is no Prime equivalent on Costco
+  
+    // Extract product price
+    const price = await page.$eval('span[automation-id="productPriceOutput"]', element => element.innerText.trim());
+
+  console.log(price);
+    // Extract the URL from the og:image meta tag
+    const imageUrl = await page.$eval('meta[property="og:image"]', meta => meta.getAttribute('content'));
+  
+    // Assuming there is no Prime equivalent on Costco
+    const primePrice = price;
+    
+    // Store name
     const store = 'Costco';
+    
+    // Return the scraped data
     return { title, price, primePrice, imageUrl, store };
-}
+  }
+  
+  
 
 async function trackTarget(page) {
         const title = await page.$eval('h1#pdp-product-title-id', el => el.innerText.trim());
@@ -121,5 +135,6 @@ async function trackTarget(page) {
         const store = 'Target';
         return { title, price, primePrice, imageUrl, store };
     }
-
+//test
+fetchProductDetails('https://www.costco.com/roborock-qx-revo-vacuum-and-mop-robot-with-multifunctional-dock.product.4000233271.html');
 module.exports = fetchProductDetails;
