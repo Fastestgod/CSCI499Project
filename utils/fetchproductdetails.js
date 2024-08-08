@@ -89,12 +89,21 @@ async function trackNike(page) {
 }
 
 // Function to fetch product details from Costco
+//price could not be fectehd due to an location needed
 async function trackCostco(page) {
     // Extract product title
     const title = await page.$eval('h1[automation-id="productName"]', element => element.innerText);
   
-    // Extract product price
-    const price = await page.$eval('span[automation-id="productPriceOutput"]', element => element.innerText.trim());
+   // Extract the value from the script
+  const scriptContent = await page.evaluate(() => {
+    const script = document.querySelector('script[data-adobeopt-id="565894-data"]');
+    return script ? script.innerHTML : '';
+  });
+
+  // Extract the dprice value using a regular expression
+  const dpriceMatch = scriptContent.match(/"dprice":\s*"(\d+\.\d+)"/);
+  const price = dpriceMatch ? dpriceMatch[1] : '- -.- -';
+
 
   console.log(price);
     // Extract the URL from the og:image meta tag
