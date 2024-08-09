@@ -45,13 +45,9 @@
                     <div class="price-box">
                         <img src="/images/homedepot.png" alt="Home Depot Logo" class="store-logo"> Home Depot Price: <%= product.price %>
                     </div>
-                <% } else if (product.store === 'Costco') { %>
+                <% } else if (product.store === 'Sams Club') { %>
                     <div class="price-box">
-                        <img src="/images/costco.png" alt="Costco Logo" class="store-logo"> Costco Price: <%= product.price %>
-                    </div>
-                <% }  else if (product.store === 'Target') { %>
-                    <div class="price-box">
-                        <img src="/images/target.png" alt="Target Logo" class="store-logo"> Target Price: <%= product.price %>
+                        <img src="/images/samsclub.png" alt="Sams Club Logo" class="store-logo"> Sam's Club Price: <%= product.price %>
                     </div>
                 <% } %>
                 <% product.stores.forEach(store => { %>
@@ -74,13 +70,9 @@
                         <div class="price-box">
                             <img src="/images/homedepot.png" alt="Home Depot Logo" class="store-logo"> Home Depot Price: <%= store.price %>
                         </div>
-                    <% } else if (store.store === 'Costco') { %>
+                    <% }  else if (store.store === 'Sams Club') { %>
                         <div class="price-box">
-                            <img src="/images/costco.png" alt="Costco Logo" class="store-logo"> Costco Price: <%= store.price %>
-                        </div>
-                    <% } else if (store.store === 'Target') { %>
-                        <div class="price-box">
-                            <img src="/images/target.png" alt="Target Logo" class="store-logo"> Target Price: <%= store.price %>
+                            <img src="/images/samsclub.png" alt="Sams Club Logo" class="store-logo"> Sam's Club Price: <%= store.price %>
                         </div>
                     <% } %>
                 <% }); %>
@@ -111,20 +103,15 @@
                         Nike Price: <%= entry.price %>
                     <% } else if (entry.store === 'Home Depot') { %>
                         Home Depot Price: <%= entry.price %>
-                    <% } else if (entry.store === 'Costco') { %>
-                        Costco Price: <%= entry.price %>
-                    <% }else if (entry.store === 'Target') { %>
-                        Target Price: <%= entry.price %>
+                    <% } else if (entry.store === 'Sams Club') { %>
+                        Sam's Club Price: <%= entry.price %>
                     <% } %>
                     </li>
                 <% }) %>
             </ul>
             <canvas id="priceChart"></canvas>
         </div>
-        <div class="tracked-products">
-            <h2>Tracked Products</h2>
-            <ul id="urlList"></ul>
-        </div>
+        
     </div>
     
     <!-- Loading Overlay and Popup -->
@@ -157,37 +144,6 @@
                 }
             }
 
-            function updateProductList(products) {
-                const urlList = document.getElementById('urlList');
-                urlList.innerHTML = '';
-                products.forEach((product, index) => {
-                    const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = `/products/${index}`;
-                    link.innerText = product.title;
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.className = 'delete-button';
-                    deleteButton.innerHTML = '<img src="/images/delete.png" alt="Delete" class="delete-icon">';
-                    deleteButton.onclick = () => removeUrl(index);
-
-                    listItem.appendChild(link);
-                    listItem.appendChild(deleteButton);
-                    urlList.appendChild(listItem);
-                });
-            }
-
-            async function removeUrl(index) {
-                try {
-                    await fetch(`/products/delete-url/${index}`, {
-                        method: 'DELETE',
-                    });
-                    fetchUrls().catch(error => console.error('Error fetching URLs after deletion:', error));
-                } catch (error) {
-                    console.error('Error deleting URL:', error);
-                }
-            }
-
             function renderPriceChart() {
                 const ctx = document.getElementById('priceChart').getContext('2d');
                 const times = <%- JSON.stringify(product.history.map(entry => entry.time)) %>;
@@ -196,8 +152,8 @@
                 const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const nikePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Nike').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const homedepotPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Home Depot').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
-                const costcoPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Costco').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
-                const targetPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Target').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const samsclubPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Sams Club').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                
 
                 const uniqueTimes = Array.from(new Set(times));
 
@@ -237,15 +193,9 @@
                                 fill: false,
                             },
                             {
-                                label: 'Costco Price',
-                                data: costcoPrices,
+                                label: 'Sams Club Price',
+                                data: samsclubPrices,
                                 borderColor: 'purple',
-                                fill: false,
-                            },
-                            {
-                                label: 'Target Price',
-                                data: targetPrices,
-                                borderColor: 'maroon',
                                 fill: false,
                             }
                         ]

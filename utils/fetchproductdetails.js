@@ -33,10 +33,8 @@ async function fetchProductDetails(url) {
             return await trackNike(page);
         }else if (url.includes('homedepot.com')){
             return await trackHomedepot(page);   
-        }else if (url.includes('costco.com')){
-            return await trackCostco(page);    
-        } else if (url.includes('target.com')){
-            return await trackTarget(page);
+        }else if (url.includes('samsclub.com')){
+            return await trackSamsClub(page);
       }
         else{
             throw new Error('Unsupported store');
@@ -102,48 +100,16 @@ async function trackHomedepot(page) {
     return { title, price, primePrice, imageUrl, store };
 }
 
-
-// Function to fetch product details from Costco
-//price could not be fectehd due to an location needed
-async function trackCostco(page) {
-    // Extract product title
-    const title = await page.$eval('h1[automation-id="productName"]', element => element.innerText);
-  
-   // Extract the value from the script
-  const scriptContent = await page.evaluate(() => {
-    const script = document.querySelector('script[data-adobeopt-id="565894-data"]');
-    return script ? script.innerHTML : '';
-  });
-
-  // Extract the dprice value using a regular expression
-  const dpriceMatch = scriptContent.match(/"dprice":\s*"(\d+\.\d+)"/);
-  const price = dpriceMatch ? dpriceMatch[1] : '- -.- -';
-
-
-  console.log(price);
-    // Extract the URL from the og:image meta tag
-    const imageUrl = await page.$eval('meta[property="og:image"]', meta => meta.getAttribute('content'));
-  
-    // Assuming there is no Prime equivalent on Costco
-    const primePrice = price;
-    
-    // Store name
-    const store = 'Costco';
-    
-    // Return the scraped data
+// Function to fetch product details from Sam's Club
+async function trackSamsClub(page) {
+    const title = await page.$eval('.sc-pc-title-full-desktop-row h1', el => el.innerText.trim());
+    const dollars = await page.$eval('.Price-characteristic', element => element.innerText);
+    const cents = await page.$eval('.Price-mantissa', element => element.innerText);
+    const price = `$${dollars}.${cents}`;
+    const imageUrl = await page.$eval('.sc-image-viewer-img', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Sam's Club
+    const store = 'Sams Club';
     return { title, price, primePrice, imageUrl, store };
-  }
-  
-  
-
-async function trackTarget(page) {
-        const title = await page.$eval('h1#pdp-product-title-id', el => el.innerText.trim());
-        const price = await page.$eval('.sc-32969646-0.koXXfQ span', el => el.textContent.trim());    
-        const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
-        const primePrice = price; // Assuming there is no Prime equivalent on Target
-        const store = 'Target';
-        return { title, price, primePrice, imageUrl, store };
     }
-//test
-fetchProductDetails('https://www.costco.com/roborock-qx-revo-vacuum-and-mop-robot-with-multifunctional-dock.product.4000233271.html');
+
 module.exports = fetchProductDetails;
