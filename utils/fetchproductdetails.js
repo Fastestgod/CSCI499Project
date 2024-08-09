@@ -7,9 +7,10 @@ async function fetchProductDetails(url) {
     try {
         browser = await puppeteer.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu']
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-http2']
         });
         const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36');
 
         // Disable images and CSS to speed up page load
         await page.setRequestInterception(true);
@@ -30,8 +31,12 @@ async function fetchProductDetails(url) {
             return await trackAmazon(page);
         } else if (url.includes('bestbuy.com')) {
             return await trackBestBuy(page);
-        } else if (url.includes('walmart.com')){
-            return await trackWalmart(page);
+        } else if (url.includes('nike.com')){
+            return await trackNike(page);
+        }else if (url.includes('homedepot.com')){
+            return await trackHomedepot(page);   
+        }else if (url.includes('costco.com')){
+            return await trackCostco(page);    
         } else if (url.includes('target.com')){
             return await trackTarget(page);
       }
@@ -89,6 +94,65 @@ async function trackBestBuy(page,store) {
     console.log({title, price, primePrice, imageUrl,store})
     return { title, price, primePrice, imageUrl,store };
 }
+<<<<<<< HEAD
+=======
+// Function to fetch product details from Nike
+async function trackNike(page) {
+    const title = await page.$eval('h1#pdp_product_title', el => el.innerText.trim());
+    const price = await page.$eval('div#price-container span[data-testid="currentPrice-container"]', el => el.innerText.trim());
+    const imageUrl = await page.$eval('ul[data-testid="mobile-image-carousel-list"] li[data-testid="mobile-image-carousel-list-item"] img[data-testid="mobile-image-carousel-image"]', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Nike
+    const store = 'Nike';
+
+    return { title, price, primePrice, imageUrl, store };
+}
+
+// Function to fetch product details from Home Depot
+async function trackHomedepot(page) {
+    const title = await page.$eval('.product-details__badge-title--wrapper h1.sui-h4-bold', element => element.innerText);
+    const dollars = await page.$eval('.price .price-format__main-price span:nth-child(2)', element => element.innerText);
+    const cents = await page.$eval('.price .price-format__main-price span:nth-child(4)', element => element.innerText);
+    const price = `$${dollars}.${cents}`;
+    const imageUrl = await page.$eval('.mediagallery__mainimage img', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Home Depot
+    const store = 'Home Depot';
+    return { title, price, primePrice, imageUrl, store };
+}
+
+
+// Function to fetch product details from Costco
+//price could not be fectehd due to an location needed
+async function trackCostco(page) {
+    // Extract product title
+    const title = await page.$eval('h1[automation-id="productName"]', element => element.innerText);
+  
+   // Extract the value from the script
+  const scriptContent = await page.evaluate(() => {
+    const script = document.querySelector('script[data-adobeopt-id="565894-data"]');
+    return script ? script.innerHTML : '';
+  });
+
+  // Extract the dprice value using a regular expression
+  const dpriceMatch = scriptContent.match(/"dprice":\s*"(\d+\.\d+)"/);
+  const price = dpriceMatch ? dpriceMatch[1] : '- -.- -';
+
+
+  console.log(price);
+    // Extract the URL from the og:image meta tag
+    const imageUrl = await page.$eval('meta[property="og:image"]', meta => meta.getAttribute('content'));
+  
+    // Assuming there is no Prime equivalent on Costco
+    const primePrice = price;
+    
+    // Store name
+    const store = 'Costco';
+    
+    // Return the scraped data
+    return { title, price, primePrice, imageUrl, store };
+  }
+  
+  
+>>>>>>> 1c4c55e3db29bf3fa2d4832e4d053da896d7f058
 
 
 
@@ -169,13 +233,18 @@ async function trackCostco(page) {
   }
 async function trackTarget(page) {
         const title = await page.$eval('h1#pdp-product-title-id', el => el.innerText.trim());
+<<<<<<< HEAD
         const price = await page.$eval('.sc-32969646-0.koXXfQ span', el => el.textContent.trim());//issues    
 >>>>>>> Stashed changes
+=======
+        const price = await page.$eval('.sc-32969646-0.koXXfQ span', el => el.textContent.trim());    
+>>>>>>> 1c4c55e3db29bf3fa2d4832e4d053da896d7f058
         const imageUrl = await page.$eval('section[data-test="@web/SiteTopOfFunnel/BaseStackedImageGallery"] img', img => img.src);
         const primePrice = price; // Assuming there is no Prime equivalent on Target
         const store = 'Target';
         return { title, price, primePrice, imageUrl, store };
     }
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 //test
@@ -185,4 +254,8 @@ fetchProductDetails('https://www.bestbuy.com/site/sony-wh1000xm5-wireless-noise-
 //fetchProductDetails('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333');
 >>>>>>> Stashed changes
 
+=======
+//test
+fetchProductDetails('https://www.costco.com/roborock-qx-revo-vacuum-and-mop-robot-with-multifunctional-dock.product.4000233271.html');
+>>>>>>> 1c4c55e3db29bf3fa2d4832e4d053da896d7f058
 module.exports = fetchProductDetails;
