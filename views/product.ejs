@@ -45,6 +45,10 @@
                     <div class="price-box">
                         <img src="/images/homedepot.png" alt="Home Depot Logo" class="store-logo"> Home Depot Price: <%= product.price %>
                     </div>
+                <% } else if (product.store === 'Walgreens') { %>
+                    <div class="price-box">
+                        <img src="/images/walgreens.png" alt="Walgreens Logo" class="store-logo"> Walgreens Price: <%= product.price %>
+                    </div>
                 <% } else if (product.store === 'Sams Club') { %>
                     <div class="price-box">
                         <img src="/images/samsclub.png" alt="Sams Club Logo" class="store-logo"> Sam's Club Price: <%= product.price %>
@@ -70,7 +74,11 @@
                         <div class="price-box">
                             <img src="/images/homedepot.png" alt="Home Depot Logo" class="store-logo"> Home Depot Price: <%= store.price %>
                         </div>
-                    <% }  else if (store.store === 'Sams Club') { %>
+                    <% } else if (store.store === 'Walgreens') { %>
+                        <div class="price-box">
+                            <img src="/images/walgreens.png" alt="Walgreens Logo" class="store-logo"> Walgreens Price: <%= store.price %>
+                        </div>
+                    <% } else if (store.store === 'Sams Club') { %>
                         <div class="price-box">
                             <img src="/images/samsclub.png" alt="Sams Club Logo" class="store-logo"> Sam's Club Price: <%= store.price %>
                         </div>
@@ -103,6 +111,8 @@
                         Nike Price: <%= entry.price %>
                     <% } else if (entry.store === 'Home Depot') { %>
                         Home Depot Price: <%= entry.price %>
+                    <% } else if (entry.store === 'Walgreens') { %>
+                        Walgreens Price: <%= entry.price %>
                     <% } else if (entry.store === 'Sams Club') { %>
                         Sam's Club Price: <%= entry.price %>
                     <% } %>
@@ -152,8 +162,8 @@
                 const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const nikePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Nike').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const homedepotPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Home Depot').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const walgreensPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Walgreens').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const samsclubPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Sams Club').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
-                
 
                 const uniqueTimes = Array.from(new Set(times));
 
@@ -177,19 +187,25 @@
                             {
                                 label: 'Best Buy Price',
                                 data: bestBuyPrices,
-                                borderColor: 'red',
+                                borderColor: 'yellow',
                                 fill: false,
                             },
                             {
                                 label: 'Nike Price',
                                 data: nikePrices,
-                                borderColor: 'yellow',
+                                borderColor: 'maroon',
                                 fill: false,
                             },
                             {
                                 label: 'Home Depot Price',
                                 data: homedepotPrices,
                                 borderColor: 'orange',
+                                fill: false,
+                            },
+                            {
+                                label: 'Walgreens Price',
+                                data: walgreensPrices,
+                                borderColor: 'red',
                                 fill: false,
                             },
                             {

@@ -33,6 +33,8 @@ async function fetchProductDetails(url) {
             return await trackNike(page);
         }else if (url.includes('homedepot.com')){
             return await trackHomedepot(page);   
+        }else if (url.includes('walgreens.com')){
+            return await trackWalgreens(page);
         }else if (url.includes('samsclub.com')){
             return await trackSamsClub(page);
       }
@@ -99,6 +101,20 @@ async function trackHomedepot(page) {
     const store = 'Home Depot';
     return { title, price, primePrice, imageUrl, store };
 }
+
+// Function to fetch product details from Walgreens
+async function trackWalgreens(page) {
+    const companyName = await page.$eval('a.title-small.semi-bold', el => el.innerText.trim());
+    const productTitle = await page.$eval('span#productTitle', el => el.innerText.trim());
+    const title = `${companyName} ${productTitle}`; // Combine company name and product title
+    const price = await page.$eval('span.price__contain .title-xx-large', el => el.innerText.trim());
+    const imageUrl = await page.$eval('.productimage', img => img.src);
+    const primePrice = price; // Assuming there is no Prime equivalent on Walgreens
+    const store = 'Walgreens';
+
+    return { title, price, primePrice, imageUrl, store };
+}
+
 
 // Function to fetch product details from Sam's Club
 async function trackSamsClub(page) {
