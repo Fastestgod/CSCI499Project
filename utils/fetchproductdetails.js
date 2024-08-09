@@ -25,19 +25,24 @@ async function fetchProductDetails(url) {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
         // Determine which function to call based on the URL
-        if (url.includes('amazon.com')) {
-            return await trackAmazon(page);
-        } else if (url.includes('bestbuy.com')) {
-            return await trackBestBuy(page);
-        } else if (url.includes('nike.com')){
-            return await trackNike(page);
-        }else if (url.includes('homedepot.com')){
-            return await trackHomedepot(page);   
-        }else if (url.includes('walgreens.com')){
-            return await trackWalgreens(page);
-        }else if (url.includes('samsclub.com')){
-            return await trackSamsClub(page);
-      }
+      
+        const store = await detectStore(page);
+
+        
+
+        if (store === 'Amazon') {
+            return await trackAmazon(page,store);
+        } else if (store === 'Best Buy') {
+            return await trackBestBuy(page,store);
+        } else if (store === 'Nike'){
+            return await trackNike(page,store);
+        } else if (store === 'Home Depot'){
+            return await trackHomedepot(page,store);   
+        } else if (store === 'Walgreens'){
+            return await trackWalgreens(page,store);
+        } else if (store === 'Sams Club'){
+            return await trackSamsClub(page),store;  
+        } 
         else{
             throw new Error('Unsupported store');
         }
@@ -52,7 +57,7 @@ async function fetchProductDetails(url) {
 }
 
 // Function to fetch product details from Amazon
-async function trackAmazon(page) {
+async function trackAmazon(page,store) {
     const title = await page.$eval('h1 span#productTitle', el => el.innerText.trim());
     const price = await page.$eval('.a-offscreen', el => el.innerText.trim());
     const imageUrl = await page.$eval('#landingImage', img => img.src);
@@ -64,58 +69,52 @@ async function trackAmazon(page) {
         }
         return null;
     }) || price;
-    const store = 'Amazon';
-
-    return { title, price, primePrice, imageUrl, store };
+    return { title, price, primePrice, imageUrl,store };
 }
 
 // Function to fetch product details from Best Buy
-async function trackBestBuy(page) {
+async function trackBestBuy(page,store) {
     const title = await page.$eval('.sku-title', el => el.innerText.trim());
     const price = await page.$eval('.priceView-hero-price.priceView-customer-price span', el => el.innerText.trim());
     const imageUrl = await page.$eval('.primary-image.max-w-full.max-h-full', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Best Buy
-    const store = 'Best Buy';
 
-    return { title, price, primePrice, imageUrl, store };
+    return { title, price, primePrice, imageUrl,store };
 }
 // Function to fetch product details from Nike
-async function trackNike(page) {
+async function trackNike(page,store) {
     const title = await page.$eval('h1#pdp_product_title', el => el.innerText.trim());
     const price = await page.$eval('div#price-container span[data-testid="currentPrice-container"]', el => el.innerText.trim());
     const imageUrl = await page.$eval('ul[data-testid="mobile-image-carousel-list"] li[data-testid="mobile-image-carousel-list-item"] img[data-testid="mobile-image-carousel-image"]', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Nike
-    const store = 'Nike';
-
-    return { title, price, primePrice, imageUrl, store };
+    
+    return { title, price, primePrice, imageUrl,store };
 }
 
 // Function to fetch product details from Home Depot
-async function trackHomedepot(page) {
-    const title = await page.$eval('.product-details__badge-title--wrapper h1.sui-h4-bold', element => element.innerText);
+async function trackHomedepot(page,store) {
+    const title = await page.$eval('meta[property="og:title"]', element => element.getAttribute('content'));
+
     const dollars = await page.$eval('.price .price-format__main-price span:nth-child(2)', element => element.innerText);
     const cents = await page.$eval('.price .price-format__main-price span:nth-child(4)', element => element.innerText);
     const price = `$${dollars}.${cents}`;
     const imageUrl = await page.$eval('.mediagallery__mainimage img', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Home Depot
-    const store = 'Home Depot';
-    return { title, price, primePrice, imageUrl, store };
+    console.log({ title, price, primePrice, imageUrl,store});
+    return { title, price, primePrice, imageUrl,store};
 }
 
+
 // Function to fetch product details from Walgreens
-async function trackWalgreens(page) {
+async function trackWalgreens(page,store) {
     const companyName = await page.$eval('a.title-small.semi-bold', el => el.innerText.trim());
     const productTitle = await page.$eval('span#productTitle', el => el.innerText.trim());
     const title = `${companyName} ${productTitle}`; // Combine company name and product title
     const price = await page.$eval('span.price__contain .title-xx-large', el => el.innerText.trim());
     const imageUrl = await page.$eval('.productimage', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Walgreens
-    const store = 'Walgreens';
-
-    return { title, price, primePrice, imageUrl, store };
+    return { title, price, primePrice, imageUrl,store };
 }
-
-
 // Function to fetch product details from Sam's Club
 async function trackSamsClub(page) {
     const title = await page.$eval('.sc-pc-title-full-desktop-row h1', el => el.innerText.trim());
@@ -128,4 +127,48 @@ async function trackSamsClub(page) {
     return { title, price, primePrice, imageUrl, store };
     }
 
+  
+    async function detectStore(page) {
+        // Check for Amazon
+        try {
+            const label = await page.$eval('a#nav-logo-sprites', element => element.getAttribute('aria-label'));
+            if (label === 'Amazon') {
+                return 'Amazon';
+            }
+        } catch (error) {}
+    
+        // Check for Nike/walgreen/bestbuy
+        try {
+            const siteName = await page.$eval('meta[property="og:site_name"]', element => element.getAttribute('content'));
+            if (siteName === 'Nike.com' ){
+                return 'Nike';
+            }
+            if(siteName === 'Walgreens' || siteName === 'Best Buy'){
+                return siteName;
+            }
+        } catch (error) {}
+        
+        //Check for Sams club
+        try{
+            const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));{
+                if (url === 'https://www.samsclub.com/'){
+                    return 'Sams Club';
+                }
+            }
+        }
+        catch(error){}
+        
+        // Check for Home Depot
+        if (page.url().includes('homedepot.com')) {
+            return 'Home Depot';
+        }
+        
+        throw new Error('Unsupported store/url');
+    }
+
+//test
+//fetchProductDetails('https://www.amazon.com/dp/B099MS67S3/ref=cm_sw_r_as_gl_api_gl_i_dl_KP0W0ETNVX3SSS178FYW?linkCode=ml1&tag=mamadeals3-20&th=1');
+//fetchProductDetails('https://www.bestbuy.com/site/sony-wh1000xm5-wireless-noise-canceling-over-the-ear-headphones-black/6505727.p?skuId=6505727');
+//fetchProductDetails('https://www.nike.com/t/sportswear-premium-essentials-mens-t-shirt-dg9M0C/DO7392-101');
+fetchProductDetails('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333');
 module.exports = fetchProductDetails;

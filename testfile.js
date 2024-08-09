@@ -7,15 +7,16 @@ const puppeteer = require('puppeteer');
 
   try {
     // Navigate to the Target product page and wait until the network is idle
-    await page.goto('https://www.target.com/p/avatar-frontiers-of-pandora-special-edition-xbox-series-x/-/A-89382883#lnk=sametab', { waitUntil: 'networkidle2' });
+    
 
     // Wait for the price element to load with increased timeout
-    await page.waitForSelector('span[data-test="product-price"]', { timeout: 10000 });
+    await page.goto('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333', { waitUntil: 'domcontentloaded', timeout: 60000 });
 
     // Extract the price text
-    const price = await page.$eval('span[data-test="product-price"]', el => el.textContent.trim());
+    title = await page.$eval('meta[property="og:title"]', element => element.getAttribute('content'));
+    
 
-    console.log(price);
+    console.log(title);
   } catch (error) {
     console.error('Error:', error);
   } finally {
