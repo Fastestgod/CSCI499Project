@@ -33,14 +33,13 @@ async function fetchProductDetails(url) {
             return await trackBestBuy(page);
         } else if (store === 'Nike'){
             return await trackNike(page);
-        }else if (url.includes('homedepot.com')){
+        } else if (store === 'HomeDepot'){
             return await trackHomedepot(page);   
-        }else if (url.includes('walgreens.com')){
+        } else if (store === 'Walgreens'){
             return await trackWalgreens(page);
-        }else if (url.includes('samsclub.com')){
-            return await trackSamsClub(page);
-      }
-        else{
+        } else if (store === 'SamsClub'){
+            return await trackSamsClub(page);   
+        } else{
             throw new Error('Unsupported store');
         }
     } catch (error) {
@@ -51,6 +50,41 @@ async function fetchProductDetails(url) {
              await browser.close();
          }
      }
+}
+
+
+//MODIFY: Add sams club and walgreens
+
+async function detectStore(page) {
+    // Check for Amazon
+    try {
+        const label = await page.$eval('a#nav-logo-sprites', element => element.getAttribute('aria-label'));
+        if (label === 'Amazon') {
+            return 'Amazon';
+        }
+    } catch (error) {}
+
+    // Check for BestBuy
+    try {
+        const label = await page.$eval('a[title="BestBuy.com"] svg', element => element.getAttribute('aria-label'));
+        if (label === 'BestBuy.com') {
+            return 'BestBuy';
+        }
+    } catch (error) {}
+
+    // Check for Nike
+    try {
+        const siteName = await page.$eval('meta[property="og:site_name"]', element => element.getAttribute('content'));
+        if (siteName === 'Nike.com') {
+            return 'Nike';
+        }
+    } catch (error) {}
+
+    // Check for Home Depot
+    if (page.url().includes('homedepot.com')) {
+        return 'HomeDepot';
+    }
+    throw new Error('Unsupported store/url');
 }
 
 // Function to fetch product details from Amazon
@@ -115,7 +149,6 @@ async function trackWalgreens(page) {
 
     return { title, price, primePrice, imageUrl, store };
 }
-
 
 // Function to fetch product details from Sam's Club
 async function trackSamsClub(page) {
