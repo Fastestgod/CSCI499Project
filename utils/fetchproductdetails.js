@@ -41,7 +41,7 @@ async function fetchProductDetails(url) {
         } else if (store === 'Walgreens'){
             return await trackWalgreens(page,store);
         } else if (store === 'Sams Club'){
-            return await trackSamsClub(page),store;  
+            return await trackSamsClub(page);  
         } 
         else{
             throw new Error('Unsupported store');
@@ -123,8 +123,8 @@ async function trackSamsClub(page) {
     const price = `$${dollars}.${cents}`;
     const imageUrl = await page.$eval('.sc-image-viewer-img', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Sam's Club
-    const store = 'Sams Club';
-    return { title, price, primePrice, imageUrl, store };
+    
+    return { title, price, primePrice, imageUrl };
     }
 
   
