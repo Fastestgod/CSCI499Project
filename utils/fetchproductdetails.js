@@ -41,7 +41,7 @@ async function fetchProductDetails(url) {
         } else if (store === 'Walgreens'){
             return await trackWalgreens(page,store);
         } else if (store === 'Sams Club'){
-            return await trackSamsClub(page);  
+            return await trackSamsClub(page,store);  
         } 
         else{
             throw new Error('Unsupported store');
@@ -55,47 +55,6 @@ async function fetchProductDetails(url) {
         }
     }
 }
-
-async function detectStore(page) {
-    // Check for Amazon
-    try {
-        const label = await page.$eval('a#nav-logo-sprites', element => element.getAttribute('aria-label'));
-        if (label === 'Amazon') {
-            return 'Amazon';
-        }
-    } catch (error) {}
-
-    // Check for Nike/walgreen/bestbuy
-    try {
-        const siteName = await page.$eval('meta[property="og:site_name"]', element => element.getAttribute('content'));
-        if (siteName === 'Nike.com' ){
-            return 'Nike';
-        }
-        if(siteName === 'Walgreens' || siteName === 'Best Buy'){
-            return siteName;
-        }
-    } catch (error) {}
-    
-    //Check for Sams club
-    try{
-        const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));{
-            if (url === 'https://www.samsclub.com/'){
-                return 'Sams Club';
-            }
-        }
-    }
-    catch(error){}
-    
-    // Check for Home Depot
-    if (page.url().includes('homedepot.com')) {
-        return 'Home Depot';
-    }
-    
-    throw new Error('Unsupported store/url');
-}
-
-
-
 
 // Function to fetch product details from Amazon
 async function trackAmazon(page,store) {
@@ -135,11 +94,13 @@ async function trackNike(page,store) {
 // Function to fetch product details from Home Depot
 async function trackHomedepot(page,store) {
     const title = await page.$eval('meta[property="og:title"]', element => element.getAttribute('content'));
+
     const dollars = await page.$eval('.price .price-format__main-price span:nth-child(2)', element => element.innerText);
     const cents = await page.$eval('.price .price-format__main-price span:nth-child(4)', element => element.innerText);
     const price = `$${dollars}.${cents}`;
     const imageUrl = await page.$eval('.mediagallery__mainimage img', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Home Depot
+    console.log({ title, price, primePrice, imageUrl,store});
     return { title, price, primePrice, imageUrl,store};
 }
 
@@ -152,18 +113,18 @@ async function trackWalgreens(page,store) {
     const price = await page.$eval('span.price__contain .title-xx-large', el => el.innerText.trim());
     const imageUrl = await page.$eval('.productimage', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Walgreens
-    return { title, price, primePrice, imageUrl,store };
+    return { title, price, primePrice, imageUrl, store };
 }
 // Function to fetch product details from Sam's Club
-async function trackSamsClub(page) {
+async function trackSamsClub(page,store) {
     const title = await page.$eval('.sc-pc-title-full-desktop-row h1', el => el.innerText.trim());
     const dollars = await page.$eval('.Price-characteristic', element => element.innerText);
     const cents = await page.$eval('.Price-mantissa', element => element.innerText);
     const price = `$${dollars}.${cents}`;
     const imageUrl = await page.$eval('.sc-image-viewer-img', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Sam's Club
-    console.log({title, price, primePrice, imageUrl,store} );
-    return { title, price, primePrice, imageUrl };
+    console.log({title, price, primePrice, imageUrl, store} );
+    return { title, price, primePrice, imageUrl, store };
     }
 
   
