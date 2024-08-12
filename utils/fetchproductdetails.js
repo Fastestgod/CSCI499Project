@@ -41,7 +41,7 @@ async function fetchProductDetails(url) {
         } else if (store === 'Walgreens'){
             return await trackWalgreens(page,store);
         } else if (store === 'Sams Club'){
-            return await trackSamsClub(page);  
+            return await trackSamsClub(page,store);  
         } 
         else{
             throw new Error('Unsupported store');
@@ -79,10 +79,10 @@ async function detectStore(page) {
     //Check for Sams club
     try{
         const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));{
-            if (url === 'https://www.samsclub.com/'){
+            if (url.includes('https://www.samsclub.com/')){
                 return 'Sams Club';
             }
-        }
+            }
     }
     catch(error){}
     
@@ -143,7 +143,6 @@ async function trackHomedepot(page,store) {
     return { title, price, primePrice, imageUrl,store};
 }
 
-
 // Function to fetch product details from Walgreens
 async function trackWalgreens(page,store) {
     const companyName = await page.$eval('a.title-small.semi-bold', el => el.innerText.trim());
@@ -155,7 +154,7 @@ async function trackWalgreens(page,store) {
     return { title, price, primePrice, imageUrl,store };
 }
 // Function to fetch product details from Sam's Club
-async function trackSamsClub(page) {
+async function trackSamsClub(page,store) {
     const title = await page.$eval('.sc-pc-title-full-desktop-row h1', el => el.innerText.trim());
     const dollars = await page.$eval('.Price-characteristic', element => element.innerText);
     const cents = await page.$eval('.Price-mantissa', element => element.innerText);
@@ -166,49 +165,4 @@ async function trackSamsClub(page) {
     return { title, price, primePrice, imageUrl };
     }
 
-  
-    async function detectStore(page) {
-        // Check for Amazon
-        try {
-            const label = await page.$eval('a#nav-logo-sprites', element => element.getAttribute('aria-label'));
-            if (label === 'Amazon') {
-                return 'Amazon';
-            }
-        } catch (error) {}
-    
-        // Check for Nike/walgreen/bestbuy
-        try {
-            const siteName = await page.$eval('meta[property="og:site_name"]', element => element.getAttribute('content'));
-            if (siteName === 'Nike.com' ){
-                return 'Nike';
-            }
-            if(siteName === 'Walgreens' || siteName === 'Best Buy'){
-                return siteName;
-            }
-        } catch (error) {}
-        
-        //Check for Sams club
-        try{
-            const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));{
-                if (url.includes('https://www.samsclub.com/')){
-                    return 'Sams Club';
-                }
-            }
-        }
-        catch(error){}
-        
-        // Check for Home Depot
-        if (page.url().includes('homedepot.com')) {
-            return 'Home Depot';
-        }
-        
-        throw new Error('Unsupported store/url');
-    }
-
-//test
-//fetchProductDetails('https://www.amazon.com/dp/B099MS67S3/ref=cm_sw_r_as_gl_api_gl_i_dl_KP0W0ETNVX3SSS178FYW?linkCode=ml1&tag=mamadeals3-20&th=1');
-//fetchProductDetails('https://www.bestbuy.com/site/sony-wh1000xm5-wireless-noise-canceling-over-the-ear-headphones-black/6505727.p?skuId=6505727');
-//fetchProductDetails('https://www.nike.com/t/sportswear-premium-essentials-mens-t-shirt-dg9M0C/DO7392-101');
-//fetchProductDetails('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333');
-fetchProductDetails('https://www.samsclub.com/p/lg-65-class-ut7550-aub-series-led-4k-uhd-webos-23-smart-w-thinq-ai-tv-65ut7550au/P990338470?xid=hpg_carousel_rich-relevance.product_0_1');
 module.exports = fetchProductDetails;
