@@ -6,7 +6,7 @@
     <title>Product Details</title>
     <link rel="stylesheet" href="/styles/product.css">
     <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js is used to render a graph display for the product history-->
 </head>
 <body>
 
@@ -138,21 +138,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchUrls().catch(error => console.error('Error fetching URLs:', error));
             renderPriceChart();
-
-            async function fetchUrls() {
-                try {
-                    const response = await fetch('/products/get-urls');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const products = await response.json();
-                    updateProductList(products);
-                } catch (error) {
-                    console.error('Error fetching URLs:', error);
-                }
-            }
 
             function renderPriceChart() {
                 const ctx = document.getElementById('priceChart').getContext('2d');
