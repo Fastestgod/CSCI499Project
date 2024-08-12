@@ -51,6 +51,44 @@ async function fetchProductDetails(url) {
     }
 }
 
+// Function to detect the store based on the page content
+async function detectStore(page) {
+    // Check for Amazon
+    try {
+        const label = await page.$eval('a#nav-logo-sprites', element => element.getAttribute('aria-label'));
+        if (label === 'Amazon') {
+            return 'Amazon';
+        }
+    } catch (error) {}
+
+    // Check for Nike, Walgreens, Best Buy
+    try {
+        const siteName = await page.$eval('meta[property="og:site_name"]', element => element.getAttribute('content'));
+        if (siteName === 'Nike.com') {
+            return 'Nike';
+        }
+        if (siteName === 'Walgreens' || siteName === 'Best Buy') {
+            return siteName;
+        }
+    } catch (error) {}
+
+    // Check for Sam's Club
+    try {
+        const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));
+        if (url.includes('https://www.samsclub.com/')) {
+            return 'Sams Club';
+        }
+    } catch (error) {}
+
+    // Check for Home Depot
+    if (page.url().includes('homedepot.com')) {
+        return 'Home Depot';
+    }
+
+    throw new Error('Unsupported store/url');
+}
+
+
 // Function to fetch product details from Amazon
 async function trackAmazon(page, store) {
     const title = await page.$eval('h1 span#productTitle', el => el.innerText.trim());
@@ -123,49 +161,5 @@ async function trackSamsClub(page, store) {
     //console.log({ title, price, primePrice, imageUrl, store });
     return { title, price, primePrice, imageUrl, store };
 }
-
-// Function to detect the store based on the page content
-async function detectStore(page) {
-    // Check for Amazon
-    try {
-        const label = await page.$eval('a#nav-logo-sprites', element => element.getAttribute('aria-label'));
-        if (label === 'Amazon') {
-            return 'Amazon';
-        }
-    } catch (error) {}
-
-    // Check for Nike, Walgreens, Best Buy
-    try {
-        const siteName = await page.$eval('meta[property="og:site_name"]', element => element.getAttribute('content'));
-        if (siteName === 'Nike.com') {
-            return 'Nike';
-        }
-        if (siteName === 'Walgreens' || siteName === 'Best Buy') {
-            return siteName;
-        }
-    } catch (error) {}
-
-    // Check for Sam's Club
-    try {
-        const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));
-        if (url.includes('https://www.samsclub.com/')) {
-            return 'Sams Club';
-        }
-    } catch (error) {}
-
-    // Check for Home Depot
-    if (page.url().includes('homedepot.com')) {
-        return 'Home Depot';
-    }
-
-    throw new Error('Unsupported store/url');
-}
-
-// Test the function
-//fetchProductDetails('https://www.amazon.com/dp/B099MS67S3/ref=cm_sw_r_as_gl_api_gl_i_dl_KP0W0ETNVX3SSS178FYW?linkCode=ml1&tag=mamadeals3-20&th=1');
-// fetchProductDetails('https://www.bestbuy.com/site/sony-wh1000xm5-wireless-noise-canceling-over-the-ear-headphones-black/6505727.p?skuId=6505727');
-// fetchProductDetails('https://www.nike.com/t/sportswear-premium-essentials-mens-t-shirt-dg9M0C/DO7392-101');
-// fetchProductDetails('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333');
-fetchProductDetails('https://www.samsclub.com/p/members-mark-unsalted-sweet-cream-butter-4lbs/prod18380300?xid=hpg_carousel_rich-relevance.product_0_3');
 
 module.exports = fetchProductDetails;

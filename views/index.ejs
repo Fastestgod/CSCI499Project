@@ -66,6 +66,14 @@
 
     <script>
 
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for an error message in the URL
+            const params = new URLSearchParams(window.location.search);
+            const errorMessage = params.get('error');
+            if (errorMessage) {
+                alert(decodeURIComponent(errorMessage)); // Display the error as an alert
+            }
+
             // Carousel functionality
             let currentIndex = 0;
             const items = document.querySelectorAll('.carousel-item');
@@ -93,6 +101,7 @@
             document.getElementById('loadingPopup').style.display = 'block';
             document.body.classList.add('dimmed');
         }
+    });
     </script>
 </body>
 </html>
