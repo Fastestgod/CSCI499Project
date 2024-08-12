@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Character encoding and viewport settings for responsiveness -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Title of the page displayed on the browser tab -->
     <title>PriceWatch</title>
-    
-    <!-- Link to the main stylesheet for styling the page -->
     <link rel="stylesheet" href="/styles/main.css">
-    
-    <!-- Link to the favicon for the browser tab -->
     <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
 </head>
 <body>
 
-    <!-- Navigation bar with links to different sections of the site -->
     <nav class="navbar">
         <ul class="navbar-links">
             <li><a href="/">Home</a></li>
@@ -26,14 +18,11 @@
     </nav>
 
     <div class="container">
-        <!-- Header section with site logo and welcome message -->
         <header>
             <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo" class="logo">
             <h1>Welcome to PriceWatch</h1>
             <p>Are you tired of being scammed with unrealistic prices in online shopping? With PriceWatch, never lose money again! Paste in the link to your product in the search bar below and start saving!</p>
         </header>
-        
-        <!-- Section with a form to add a new product URL -->
         <section class="search-section">
             <p>Start Searching</p>
             <form id="urlForm" action="/products/add-url" method="post" onsubmit="showLoadingPopup()">
@@ -42,7 +31,6 @@
             </form>
         </section>
 
-        <!-- Image carousel to display featured products -->
         <div class="carousel">
             <div class="carousel-item active">
                 <img src="/images/beats.jpg" alt="Placeholder 1">
@@ -59,18 +47,17 @@
         </div>
     </div>
 
-    <!-- Section listing supported stores -->
     <h3>Supported Stores</h3>
     <div class="supported-stores">
         <img src="/images/amazon.png" alt="Amazon" class="store-logo">
         <img src="/images/bestbuy.png" alt="Best Buy" class="store-logo">
-        <img src="/images/nike.png" alt="Nike" class="store-logo">
+        <img src="/images/nike.png" alt="Nike" class = "store-logo">
         <img src="/images/homedepot.png" alt="Home Depot" class="store-logo">
         <img src="/images/walgreens.png" alt="Walgreens" class="store-logo">
         <img src="/images/samsclub.png" alt="Sams Club" class="store-logo">
     </div>
     
-    <!-- Loading overlay and popup to show during product fetching -->
+    <!-- Loading Overlay and Popup -->
     <div id="loadingOverlay" class="loading-overlay"></div>
     <div id="loadingPopup" class="loading-popup">
         <div class="lds-dual-ring"></div>
@@ -78,26 +65,24 @@
     </div>
 
     <script>
-        // Wait for the DOM to fully load
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Check for an error message in the URL query parameters
+            // Check for an error message in the URL
             const params = new URLSearchParams(window.location.search);
             const errorMessage = params.get('error');
             if (errorMessage) {
-                alert(decodeURIComponent(errorMessage)); // Display the error message as an alert
+                alert(decodeURIComponent(errorMessage)); // Display the error as an alert
             }
 
-            // Initialize carousel functionality
+            // Carousel functionality
             let currentIndex = 0;
             const items = document.querySelectorAll('.carousel-item');
             const totalItems = items.length;
 
             function showNextItem() {
-                // Update the current index to show the next item
                 const previousIndex = currentIndex;
                 currentIndex = (currentIndex + 1) % totalItems;
 
-                // Apply classes to manage carousel transitions
                 items[previousIndex].classList.remove('active');
                 items[previousIndex].classList.add('previous');
                 items[currentIndex].classList.add('next');
@@ -105,15 +90,13 @@
                     items[previousIndex].classList.remove('previous');
                     items[currentIndex].classList.remove('next');
                     items[currentIndex].classList.add('active');
-                }, 20); // Short delay for smooth transition effect
+                }, 20); // Delay for transitioning effect
             }
 
-            // Set interval to change the carousel image every 5 seconds
-            setInterval(showNextItem, 5000);
-        });
+            setInterval(showNextItem, 5000); // Change image every 5 seconds
+    });
 
-        // Function to show loading popup during form submission
-        function showLoadingPopup() {
+    function showLoadingPopup() {
             document.getElementById('loadingOverlay').style.display = 'block';
             document.getElementById('loadingPopup').style.display = 'block';
             document.body.classList.add('dimmed');

@@ -1,25 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Character encoding and viewport settings for responsiveness -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Title of the page displayed on the browser tab -->
     <title>Product Details</title>
-    
-    <!-- Link to the stylesheet for the product page styling -->
     <link rel="stylesheet" href="/styles/product.css">
-    
-    <!-- Link to the favicon for the browser tab -->
     <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
-    
-    <!-- Link to Chart.js for rendering charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js is used to render a graph display for the product history-->
 </head>
 <body>
 
-    <!-- Navigation bar with links to different sections of the site -->
     <nav class="navbar">
         <ul class="navbar-links">
             <li><img src="/images/pricewatchlogo.png" alt="PriceWatch Logo"></li>
@@ -30,18 +20,12 @@
     </nav>
 
     <div class="container">
-        <!-- Container for the product details -->
         <div class="product-container">
-            <!-- Section displaying the product image -->
             <div class="product-image">
                 <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
             </div>
-            
-            <!-- Section displaying detailed information about the product -->
             <div class="product-details">
                 <h1 class="product-title"><%= product.title %></h1>
-                
-                <!-- Conditional rendering based on the store -->
                 <% if (product.store === 'Amazon') { %>
                     <div class="price-box">
                         <img src="/images/amazon.png" alt="Amazon Logo" class="store-logo"> Amazon Price: <%= product.price %>
@@ -70,8 +54,6 @@
                         <img src="/images/samsclub.png" alt="Sams Club Logo" class="store-logo"> Sam's Club Price: <%= product.price %>
                     </div>
                 <% } %>
-                
-                <!-- Display prices for other stores associated with the product -->
                 <% product.stores.forEach(store => { %>
                     <% if (store.store === 'Amazon') { %>
                         <div class="price-box">
@@ -102,8 +84,6 @@
                         </div>
                     <% } %>
                 <% }); %>
-                
-                <!-- Buttons to buy the product or add a new store -->
                 <div class="buy-now-button-container">
                     <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy on <%= product.store %></a>
                     <% product.stores.forEach(store => { %>
@@ -111,16 +91,12 @@
                     <% }); %>
                 </div>
                 <button id="addStoreButton">Add Store</button>
-                
-                <!-- Form to add a new store URL, initially hidden -->
                 <form id="storeUrlForm" action="/products/add-store-url/<%= productIndex %>" method="post" style="display:none;" onsubmit="showLoadingPopup()">
                     <input type="text" name="storeUrl" placeholder="Enter Product URL" required>
                     <button type="submit">Add URL</button>
                 </form>
             </div>
         </div>
-        
-        <!-- Section displaying the price history with a chart -->
         <div class="price-history">
             <h2>Price History</h2>
             <p>Last Updated: <%= product.lastUpdated %></p>
@@ -143,9 +119,9 @@
                     </li>
                 <% }) %>
             </ul>
-            <!-- Canvas element for rendering the price history chart -->
             <canvas id="priceChart"></canvas>
         </div>
+        
     </div>
     
     <!-- Loading Overlay and Popup -->
@@ -156,23 +132,119 @@
     </div>
 
     <script>
-        // Toggle the visibility of the "Add Store" form
         document.getElementById('addStoreButton').addEventListener('click', function() {
             const form = document.getElementById('storeUrlForm');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         });
 
-        // On document load, check for error messages and render the price chart
         document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
+             // Check for an error message in the URL
+             const params = new URLSearchParams(window.location.search);
             const errorMessage = params.get('error');
             if (errorMessage) {
-                alert(decodeURIComponent(errorMessage)); // Display error as alert
+                alert(decodeURIComponent(errorMessage)); // Display the error as an alert
             }
             renderPriceChart();
 
-            // Function to render the price chart using Chart.js
             function renderPriceChart() {
                 const ctx = document.getElementById('priceChart').getContext('2d');
                 const times = <%- JSON.stringify(product.history.map(entry => entry.time)) %>;
-                const amazonPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,""))
+                const amazonPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const primePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.primePrice.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const bestBuyPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Best Buy').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const nikePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Nike').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const homedepotPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Home Depot').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const walgreensPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Walgreens').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+                const samsclubPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Sams Club').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
+
+                const uniqueTimes = Array.from(new Set(times));
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: uniqueTimes,
+                        datasets: [
+                            {
+                                label: 'Amazon Price',
+                                data: amazonPrices,
+                                borderColor: 'blue',
+                                fill: false,
+                            },
+                            {
+                                label: 'Prime Price',
+                                data: primePrices,
+                                borderColor: 'green',
+                                fill: false,
+                            },
+                            {
+                                label: 'Best Buy Price',
+                                data: bestBuyPrices,
+                                borderColor: 'yellow',
+                                fill: false,
+                            },
+                            {
+                                label: 'Nike Price',
+                                data: nikePrices,
+                                borderColor: 'maroon',
+                                fill: false,
+                            },
+                            {
+                                label: 'Home Depot Price',
+                                data: homedepotPrices,
+                                borderColor: 'orange',
+                                fill: false,
+                            },
+                            {
+                                label: 'Walgreens Price',
+                                data: walgreensPrices,
+                                borderColor: 'red',
+                                fill: false,
+                            },
+                            {
+                                label: 'Sams Club Price',
+                                data: samsclubPrices,
+                                borderColor: 'purple',
+                                fill: false,
+                            }
+                        ]
+                    },
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Price Data'
+                        },
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    unit: 'minute',
+                                    tooltipFormat: 'll HH:mm',
+                                    displayFormats: {
+                                        'minute': 'HH:mm'
+                                    }
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Time'
+                                }
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Price ($)'
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        });
+
+        function showLoadingPopup() {
+            document.getElementById('loadingOverlay').style.display = 'block';
+            document.getElementById('loadingPopup').style.display = 'block';
+            document.body.classList.add('dimmed');
+        }
+    </script>
+</body>
+</html>
