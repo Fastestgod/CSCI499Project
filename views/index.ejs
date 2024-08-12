@@ -4,68 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PriceWatch</title>
-    <link rel="stylesheet" href="/styles/main.css">
-    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/main.css"> <!-- Link to the external stylesheet for page styling -->
+    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon"> <!-- Favicon for the page -->
 </head>
 <body>
 
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <ul class="navbar-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/tracked">Tracked Products</a></li>
-            <li><a href="/about">About PriceWatch</a></li>
+            <li><a href="/">Home</a></li> <!-- Link to the homepage -->
+            <li><a href="/tracked">Tracked Products</a></li> <!-- Link to the tracked products page -->
+            <li><a href="/about">About PriceWatch</a></li> <!-- Link to the About PriceWatch page -->
         </ul>
     </nav>
 
+    <!-- Main Container -->
     <div class="container">
+        <!-- Header Section -->
         <header>
-            <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo" class="logo">
-            <h1>Welcome to PriceWatch</h1>
-            <p>Are you tired of being scammed with unrealistic prices in online shopping? With PriceWatch, never lose money again! Paste in the link to your product in the search bar below and start saving!</p>
+            <img src="/images/pricewatchlogo.png" alt="PriceWatch Logo" class="logo"> <!-- PriceWatch logo -->
+            <h1>Welcome to PriceWatch</h1> <!-- Main heading -->
+            <p>Are you tired of being scammed with unrealistic prices in online shopping? With PriceWatch, never lose money again! Paste in the link to your product in the search bar below and start saving!</p> <!-- Introduction text -->
         </header>
+        
+        <!-- Search Section -->
         <section class="search-section">
-            <p>Start Searching</p>
+            <p>Start Searching</p> <!-- Prompt for the user to start searching -->
             <form id="urlForm" action="/products/add-url" method="post" onsubmit="showLoadingPopup()">
-                <input type="text" id="storeUrl" name="storeUrl" placeholder="Enter Product URL" required>
-                <button type="submit">Add URL</button>
+                <input type="text" id="storeUrl" name="storeUrl" placeholder="Enter Product URL" required> <!-- Input field for the product URL -->
+                <button type="submit">Add URL</button> <!-- Submit button for the form -->
             </form>
         </section>
 
+        <!-- Carousel Section -->
         <div class="carousel">
             <div class="carousel-item active">
-                <img src="/images/beats.jpg" alt="Placeholder 1">
+                <img src="/images/beats.jpg" alt="Placeholder 1"> <!-- Carousel image 1 -->
             </div>
             <div class="carousel-item">
-                <img src="/images/duffle.jpg" alt="Placeholder 2">
+                <img src="/images/duffle.jpg" alt="Placeholder 2"> <!-- Carousel image 2 -->
             </div>
             <div class="carousel-item">
-                <img src="/images/tv.jpg" alt="Placeholder 3">
+                <img src="/images/tv.jpg" alt="Placeholder 3"> <!-- Carousel image 3 -->
             </div>
             <div class="carousel-item">
-                <img src="/images/camera.jpeg" alt="Placeholder 4">
+                <img src="/images/camera.jpeg" alt="Placeholder 4"> <!-- Carousel image 4 -->
             </div>
         </div>
     </div>
 
+    <!-- Supported Stores Section -->
     <h3>Supported Stores</h3>
     <div class="supported-stores">
-        <img src="/images/amazon.png" alt="Amazon" class="store-logo">
-        <img src="/images/bestbuy.png" alt="Best Buy" class="store-logo">
-        <img src="/images/nike.png" alt="Nike" class = "store-logo">
-        <img src="/images/homedepot.png" alt="Home Depot" class="store-logo">
-        <img src="/images/walgreens.png" alt="Walgreens" class="store-logo">
-        <img src="/images/samsclub.png" alt="Sams Club" class="store-logo">
+        <img src="/images/amazon.png" alt="Amazon" class="store-logo"> <!-- Amazon store logo -->
+        <img src="/images/bestbuy.png" alt="Best Buy" class="store-logo"> <!-- Best Buy store logo -->
+        <img src="/images/nike.png" alt="Nike" class="store-logo"> <!-- Nike store logo -->
+        <img src="/images/homedepot.png" alt="Home Depot" class="store-logo"> <!-- Home Depot store logo -->
+        <img src="/images/walgreens.png" alt="Walgreens" class="store-logo"> <!-- Walgreens store logo -->
+        <img src="/images/samsclub.png" alt="Sams Club" class="store-logo"> <!-- Sam's Club store logo -->
     </div>
     
     <!-- Loading Overlay and Popup -->
-    <div id="loadingOverlay" class="loading-overlay"></div>
+    <div id="loadingOverlay" class="loading-overlay"></div> <!-- Overlay shown during loading -->
     <div id="loadingPopup" class="loading-popup">
-        <div class="lds-dual-ring"></div>
-        <p>Fetching Product Information...</p>
+        <div class="lds-dual-ring"></div> <!-- Loading spinner -->
+        <p>Fetching Product Information...</p> <!-- Loading message -->
     </div>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', () => {
             // Check for an error message in the URL
             const params = new URLSearchParams(window.location.search);
@@ -75,31 +81,31 @@
             }
 
             // Carousel functionality
-            let currentIndex = 0;
-            const items = document.querySelectorAll('.carousel-item');
-            const totalItems = items.length;
+            let currentIndex = 0; // Current index of the carousel item
+            const items = document.querySelectorAll('.carousel-item'); // Get all carousel items
+            const totalItems = items.length; // Total number of carousel items
 
             function showNextItem() {
-                const previousIndex = currentIndex;
-                currentIndex = (currentIndex + 1) % totalItems;
+                const previousIndex = currentIndex; // Store the previous index
+                currentIndex = (currentIndex + 1) % totalItems; // Move to the next index
 
-                items[previousIndex].classList.remove('active');
-                items[previousIndex].classList.add('previous');
-                items[currentIndex].classList.add('next');
+                items[previousIndex].classList.remove('active'); // Remove 'active' class from the previous item
+                items[previousIndex].classList.add('previous'); // Add 'previous' class to the previous item
+                items[currentIndex].classList.add('next'); // Add 'next' class to the current item
                 setTimeout(() => {
-                    items[previousIndex].classList.remove('previous');
-                    items[currentIndex].classList.remove('next');
-                    items[currentIndex].classList.add('active');
-                }, 20); // Delay for transitioning effect
+                    items[previousIndex].classList.remove('previous'); // Remove 'previous' class after transition
+                    items[currentIndex].classList.remove('next'); // Remove 'next' class after transition
+                    items[currentIndex].classList.add('active'); // Add 'active' class to the current item
+                }, 20); // Delay for the transition effect
             }
 
             setInterval(showNextItem, 5000); // Change image every 5 seconds
-    });
+        });
 
-    function showLoadingPopup() {
-            document.getElementById('loadingOverlay').style.display = 'block';
-            document.getElementById('loadingPopup').style.display = 'block';
-            document.body.classList.add('dimmed');
+        function showLoadingPopup() {
+            document.getElementById('loadingOverlay').style.display = 'block'; // Show the loading overlay
+            document.getElementById('loadingPopup').style.display = 'block'; // Show the loading popup
+            document.body.classList.add('dimmed'); // Add a dimmed class to the body
         }
     </script>
 </body>
