@@ -123,7 +123,7 @@ async function trackSamsClub(page) {
     const price = `$${dollars}.${cents}`;
     const imageUrl = await page.$eval('.sc-image-viewer-img', img => img.src);
     const primePrice = price; // Assuming there is no Prime equivalent on Sam's Club
-    
+    console.log({title, price, primePrice, imageUrl,store} );
     return { title, price, primePrice, imageUrl };
     }
 
@@ -151,7 +151,7 @@ async function trackSamsClub(page) {
         //Check for Sams club
         try{
             const url = await page.$eval('meta[property="og:url"]', element => element.getAttribute('content'));{
-                if (url === 'https://www.samsclub.com/'){
+                if (url.includes('https://www.samsclub.com/')){
                     return 'Sams Club';
                 }
             }
@@ -170,5 +170,6 @@ async function trackSamsClub(page) {
 //fetchProductDetails('https://www.amazon.com/dp/B099MS67S3/ref=cm_sw_r_as_gl_api_gl_i_dl_KP0W0ETNVX3SSS178FYW?linkCode=ml1&tag=mamadeals3-20&th=1');
 //fetchProductDetails('https://www.bestbuy.com/site/sony-wh1000xm5-wireless-noise-canceling-over-the-ear-headphones-black/6505727.p?skuId=6505727');
 //fetchProductDetails('https://www.nike.com/t/sportswear-premium-essentials-mens-t-shirt-dg9M0C/DO7392-101');
-fetchProductDetails('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333');
+//fetchProductDetails('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333');
+fetchProductDetails('https://www.samsclub.com/p/lg-65-class-ut7550-aub-series-led-4k-uhd-webos-23-smart-w-thinq-ai-tv-65ut7550au/P990338470?xid=hpg_carousel_rich-relevance.product_0_1');
 module.exports = fetchProductDetails;
