@@ -10,17 +10,18 @@ const puppeteer = require('puppeteer');
     
 
     // Wait for the price element to load with increased timeout
-    await page.goto('https://www.homedepot.com/p/SONY-ZX-Series-Stereo-Headphones-MDRZX110-WHI/315165333', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto('https://www.samsclub.com/p/members-mark-unsalted-sweet-cream-butter-4lbs/prod18380300?xid=hpg_carousel_rich-relevance.product_0_3', { waitUntil: 'domcontentloaded', timeout: 60000 });
 
     // Extract the price text
-    title = await page.$eval('meta[property="og:title"]', element => element.getAttribute('content'));
+    const price = await page.$eval('meta[itemprop="price"]', el => el.getAttribute('content'));
     
 
-    console.log(title);
+    console.log(price);
   } catch (error) {
     console.error('Error:', error);
   } finally {
     // Close the browser
-    await browser.close();
+
+    
   }
 })();
