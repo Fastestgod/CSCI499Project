@@ -3,7 +3,6 @@ body, html {
     margin: 0;
     padding: 0;
     text-align: center;
-    background-image: url('../images/gradient.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed; 
@@ -48,6 +47,38 @@ body, html {
     height: 50px; 
     width: auto; 
 }
+
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+body.dark-mode .navbar {
+    background-color: #1f1f1f;
+}
+
+body.dark-mode .navbar-links a {
+    color: #ffffff;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+.dark-mode-toggle {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: white;
+    margin-right: 20px;
+}
+
+body.dark-mode .dark-mode-toggle {
+    color: #ffcc00;
+}
+
+
 
 .container {
     width: 80%;
@@ -271,6 +302,7 @@ body.dimmed {
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000; /* Ensure it appears above the overlay */
+    color: black; 
 }
 
 .lds-dual-ring,
@@ -289,8 +321,8 @@ body.dimmed {
   height: 64px;
   margin: 8px;
   border-radius: 50%;
-  border: 6.4px solid currentColor;
-  border-color: currentColor transparent currentColor transparent;
+  border: 6.4px solid black; 
+  border-color: black transparent black transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 @keyframes lds-dual-ring {

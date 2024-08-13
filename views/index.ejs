@@ -14,6 +14,10 @@
             <li><a href="/">Home</a></li>
             <li><a href="/tracked">Tracked Products</a></li>
             <li><a href="/about">About PriceWatch</a></li>
+            <li class="spacer"></li> <!-- Empty space to push the toggle to the right -->
+            <li class="toggle-container">
+                <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
+            </li>
         </ul>
     </nav>
 
@@ -49,9 +53,9 @@
 
     <h3>Supported Stores</h3>
     <div class="supported-stores">
-        <img src="/images/amazon.png" alt="Amazon" class="store-logo">
+        <img src="/images/amazon.png" alt="Amazon" class="store-logo" data-light-src="/images/amazon.png" data-dark-src="/images/whiteamazon.png">
         <img src="/images/bestbuy.png" alt="Best Buy" class="store-logo">
-        <img src="/images/nike.png" alt="Nike" class = "store-logo">
+        <img src="/images/nike.png" alt="Nike" class="store-logo" data-light-src="/images/nike.png" data-dark-src="/images/whitenike.png">
         <img src="/images/homedepot.png" alt="Home Depot" class="store-logo">
         <img src="/images/walgreens.png" alt="Walgreens" class="store-logo">
         <img src="/images/samsclub.png" alt="Sams Club" class="store-logo">
@@ -94,7 +98,34 @@
             }
 
             setInterval(showNextItem, 5000); // Change image every 5 seconds
-    });
+
+            const toggleButton = document.getElementById('darkModeToggle');
+             const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+
+            const updateImagesForMode = (darkMode) => {
+            const images = document.querySelectorAll('.supported-stores img');
+            images.forEach(img => {
+            const newSrc = darkMode ? img.dataset.darkSrc : img.dataset.lightSrc;
+            if (newSrc) {
+                img.src = newSrc;
+            }
+        });
+    };
+
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                toggleButton.textContent = '☀️';
+                updateImagesForMode(true);
+            }
+
+            toggleButton.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const darkModeEnabled = document.body.classList.contains('dark-mode');
+                localStorage.setItem('dark-mode', darkModeEnabled);
+                toggleButton.textContent = darkModeEnabled ? '☀️' : '🌙';
+                updateImagesForMode(darkModeEnabled);
+            });
+        });
 
     function showLoadingPopup() {
             document.getElementById('loadingOverlay').style.display = 'block';
