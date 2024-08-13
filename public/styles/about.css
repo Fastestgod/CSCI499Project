@@ -59,6 +59,10 @@ body.dark-mode .navbar-links a {
     color: #ffffff;
 }
 
+body.dark-mode .navbar-links a:hover {
+    color: rgba(253, 165, 0, 0.959);
+}
+
 .spacer {
     flex-grow: 1;
 }
