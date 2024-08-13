@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
-    <link rel="stylesheet" href="/styles/product.css">
-    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js is used to render a graph display for the product history-->
+    <link rel="stylesheet" href="/styles/product.css"> <!-- Link to external stylesheet for product page styling -->
+    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon"> <!-- Favicon for the page -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js library for rendering graphs -->
 </head>
 <body>
 
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <ul class="navbar-links">
             <li><img src="/images/pricewatchlogo.png" alt="PriceWatch Logo"></li>
@@ -23,13 +24,17 @@
         </ul>
     </nav>
 
+    <!-- Main Container -->
     <div class="container">
+        <!-- Product Details Section -->
         <div class="product-container">
             <div class="product-image">
-                <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+                <img src="<%= product.imageUrl %>" alt="<%= product.title %>"> <!-- Product image -->
             </div>
             <div class="product-details">
-                <h1 class="product-title"><%= product.title %></h1>
+                <h1 class="product-title"><%= product.title %></h1> <!-- Product title -->
+
+                <!-- Conditional display for different stores' prices -->
                 <% if (product.store === 'Amazon') { %>
                     <div class="price-box">
                         <img src="/images/amazon.png" alt="Amazon Logo" class="store-logo"> Amazon Price: <%= product.price %>
@@ -58,6 +63,8 @@
                         <img src="/images/samsclub.png" alt="Sams Club Logo" class="store-logo"> Sam's Club Price: <%= product.price %>
                     </div>
                 <% } %>
+
+                <!-- Display prices from other stores if available -->
                 <% product.stores.forEach(store => { %>
                     <% if (store.store === 'Amazon') { %>
                         <div class="price-box">
@@ -88,22 +95,26 @@
                         </div>
                     <% } %>
                 <% }); %>
+
+                <!-- Buttons for purchasing and adding store URLs -->
                 <div class="buy-now-button-container">
                     <a href="<%= product.url %>" target="_blank" class="buy-now-button">Buy on <%= product.store %></a>
                     <% product.stores.forEach(store => { %>
                         <a href="<%= store.url %>" target="_blank" class="buy-now-button">Buy on <%= store.store %></a>
                     <% }); %>
                 </div>
-                <button id="addStoreButton">Add Store</button>
+                <button id="addStoreButton">Add Store</button> <!-- Button to toggle the store URL form -->
                 <form id="storeUrlForm" action="/products/add-store-url/<%= productIndex %>" method="post" style="display:none;" onsubmit="showLoadingPopup()">
-                    <input type="text" name="storeUrl" placeholder="Enter Product URL" required>
-                    <button type="submit">Add URL</button>
+                    <input type="text" name="storeUrl" placeholder="Enter Product URL" required> <!-- Input field for adding a store URL -->
+                    <button type="submit">Add URL</button> <!-- Submit button for the form -->
                 </form>
             </div>
         </div>
+
+        <!-- Price History Section -->
         <div class="price-history">
-            <h2>Price History</h2>
-            <p>Last Updated: <%= product.lastUpdated %></p>
+            <h2>Price History</h2> <!-- Heading for price history section -->
+            <p>Last Updated: <%= product.lastUpdated %></p> <!-- Last updated date for the price history -->
             <ul>
                 <% product.history.forEach(entry => { %>
                     <li>Time: <%= entry.time %>, 
@@ -123,35 +134,37 @@
                     </li>
                 <% }) %>
             </ul>
-            <canvas id="priceChart"></canvas>
+            <canvas id="priceChart"></canvas> <!-- Canvas element for rendering price chart -->
         </div>
         
     </div>
     
     <!-- Loading Overlay and Popup -->
-    <div id="loadingOverlay" class="loading-overlay"></div>
+    <div id="loadingOverlay" class="loading-overlay"></div> <!-- Overlay shown during loading -->
     <div id="loadingPopup" class="loading-popup">
-        <div class="lds-dual-ring"></div>
-        <p>Fetching Product Information...</p>
+        <div class="lds-dual-ring"></div> <!-- Loading spinner -->
+        <p>Fetching Product Information...</p> <!-- Loading message -->
     </div>
 
     <script>
+        // Toggle the display of the store URL form
         document.getElementById('addStoreButton').addEventListener('click', function() {
             const form = document.getElementById('storeUrlForm');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-             // Check for an error message in the URL
-             const params = new URLSearchParams(window.location.search);
+            // Check for an error message in the URL
+            const params = new URLSearchParams(window.location.search);
             const errorMessage = params.get('error');
             if (errorMessage) {
                 alert(decodeURIComponent(errorMessage)); // Display the error as an alert
             }
-            renderPriceChart();
+            renderPriceChart(); // Render the price chart
 
             function renderPriceChart() {
                 const ctx = document.getElementById('priceChart').getContext('2d');
+                // Extract data for the chart
                 const times = <%- JSON.stringify(product.history.map(entry => entry.time)) %>;
                 const amazonPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const primePrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Amazon').map(entry => ({ x: entry.time, y: parseFloat(entry.primePrice.replace(/[^0-9.-]+/g,"")) }))) %>;
@@ -161,8 +174,9 @@
                 const walgreensPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Walgreens').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
                 const samsclubPrices = <%- JSON.stringify(product.history.filter(entry => entry.store === 'Sams Club').map(entry => ({ x: entry.time, y: parseFloat(entry.price.replace(/[^0-9.-]+/g,"")) }))) %>;
 
-                const uniqueTimes = Array.from(new Set(times));
+                const uniqueTimes = Array.from(new Set(times)); // Unique times for the x-axis
 
+                // Create the chart
                 new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -215,7 +229,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: 'Price Data'
+                            text: 'Price Data' // Title of the chart
                         },
                         scales: {
                             xAxes: [{
@@ -264,7 +278,7 @@
         function showLoadingPopup() {
             document.getElementById('loadingOverlay').style.display = 'block';
             document.getElementById('loadingPopup').style.display = 'block';
-            document.body.classList.add('dimmed');
+            document.body.classList.add('dimmed'); // Add a dimmed class to the body
         }
     </script>
 </body>

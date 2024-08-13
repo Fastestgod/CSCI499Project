@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=\, initial-scale=1.0">
-    <title>Tracked Products</title>
-    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="/styles/tracked.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Meta tag for responsive design -->
+    <title>Tracked Products</title> <!-- Page title -->
+    <link rel="icon" href="/images/dollar.jpg" type="image/x-icon"> <!-- Favicon for the page -->
+    <link rel="stylesheet" href="/styles/tracked.css"> <!-- Link to the external stylesheet for page styling -->
 </head>
 <body>
 
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <ul class="navbar-links">
             <li><img src="/images/pricewatchlogo.png" alt="PriceWatch Logo"></li>
@@ -22,54 +23,65 @@
         </ul>
     </nav>
 
+    <!-- Main Container -->
     <div class="container">
-        <h2>Tracked Products</h2>
+        <h2>Tracked Products</h2> <!-- Heading for the tracked products page -->
+        
+        <!-- Sorting Options -->
         <div class="sort-options">
             <span>Sort by: </span>
-            <button onclick="sortProducts('date-desc')">Order Added (Oldest to Newest)</button>
-            <button onclick="sortProducts('date-asc')">Order Added (Newest to Oldest)</button>
-            <button onclick="sortProducts('title-asc')">A-Z</button>
-            <button onclick="sortProducts('title-desc')">Z-A</button>
+            <button onclick="sortProducts('date-desc')">Order Added (Oldest to Newest)</button> <!-- Sort by date added, oldest to newest -->
+            <button onclick="sortProducts('date-asc')">Order Added (Newest to Oldest)</button> <!-- Sort by date added, newest to oldest -->
+            <button onclick="sortProducts('title-asc')">A-Z</button> <!-- Sort by title, A-Z -->
+            <button onclick="sortProducts('title-desc')">Z-A</button> <!-- Sort by title, Z-A -->
         </div>
-        <input type="text" id="searchBar" placeholder="Search for your tracked product" onkeyup="filterProducts()">
-        <p id="noProductsMessage" style="display: none;">No products are currently being tracked. Add some products to start tracking their prices!</p>
-        <p id="noResultsMessage" style="display: none;">No products found</p>
-        <ul id="urlList"></ul>
+
+        <!-- Search Bar -->
+        <input type="text" id="searchBar" placeholder="Search for your tracked product" onkeyup="filterProducts()"> <!-- Input field for searching products -->
+
+        <!-- Messages for No Products or No Results -->
+        <p id="noProductsMessage" style="display: none;">No products are currently being tracked. Add some products to start tracking their prices!</p> <!-- Message displayed when no products are tracked -->
+        <p id="noResultsMessage" style="display: none;">No products found</p> <!-- Message displayed when search yields no results -->
+
+        <!-- List of Tracked Products -->
+        <ul id="urlList"></ul> <!-- List where tracked products will be displayed -->
     </div>
 
     <script>
-        let products = [];
+        let products = []; // Array to hold the list of products
 
+        // Function to sort products based on criteria
         function sortProducts(criteria) {
-            let sortedProducts = [...products];
+            let sortedProducts = [...products]; // Create a copy of the products array
             switch (criteria) {
                 case 'date-asc':
-                    sortedProducts.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded));
+                    sortedProducts.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded)); // Sort by date ascending
                     break;
                 case 'date-desc':
-                    sortedProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                    sortedProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)); // Sort by date descending
                     break;
                 case 'title-asc':
-                    sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
+                    sortedProducts.sort((a, b) => a.title.localeCompare(b.title)); // Sort by title ascending
                     break;
                 case 'title-desc':
-                    sortedProducts.sort((a, b) => b.title.localeCompare(a.title));
+                    sortedProducts.sort((a, b) => b.title.localeCompare(a.title)); // Sort by title descending
                     break;
             }
-            updateProductList(sortedProducts);
+            updateProductList(sortedProducts); // Update the product list with sorted products
         }
 
+        // Function to filter products based on search query
         function filterProducts() {
-            const query = document.getElementById('searchBar').value.toLowerCase();
-            const filteredProducts = products.filter(product => product.title.toLowerCase().includes(query));
-            updateProductList(filteredProducts);
+            const query = document.getElementById('searchBar').value.toLowerCase(); // Get the search query
+            const filteredProducts = products.filter(product => product.title.toLowerCase().includes(query)); // Filter products
+            updateProductList(filteredProducts); // Update the product list with filtered products
             const noResultsMessage = document.getElementById('noResultsMessage');
             const noProductsMessage = document.getElementById('noProductsMessage');
             if (filteredProducts.length === 0 && query.length > 0) {
-                noResultsMessage.style.display = 'block';
-                noProductsMessage.style.display = 'none';
+                noResultsMessage.style.display = 'block'; // Show no results message if no products match the query
+                noProductsMessage.style.display = 'none'; // Hide no products message if there are results
             } else {
-                noResultsMessage.style.display = 'none';
+                noResultsMessage.style.display = 'none'; // Hide no results message if there are matching products
             }
         }
         document.addEventListener('DOMContentLoaded', () => {
