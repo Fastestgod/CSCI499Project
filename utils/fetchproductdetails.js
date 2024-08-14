@@ -4,11 +4,13 @@ const puppeteer = require('puppeteer');
 async function fetchProductDetails(url) {
     let browser = null;
     try {
+        // Launch the Puppeteer browser in headless mode with additional options to disable sandboxing and GPU acceleration
         browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-http2']
         });
         const page = await browser.newPage();
+        //evade bot detection
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36');
 
         // Disable images and CSS to speed up page load
