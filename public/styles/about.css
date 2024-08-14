@@ -99,6 +99,17 @@ h1 {
     font-family: "Poppins", sans-serif;
 }
 
+.price {
+    color: black;
+    text-shadow: -2px -2px 0 blue, 2px -2px 0 blue, -2px 2px 0 blue, 2px 2px 0 blue;
+}
+
+.watch {
+    color: blue;
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+}
+
+
 p {
     font-size: 1.4rem;
     margin-left: 350px;
