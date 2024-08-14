@@ -12,6 +12,26 @@ Current websites supported:
 
 * Amazon
 * Best Buy
+* Nike
+* Home Depot
+* Walgreens
+* Sam's Club*
+  
+IMPORTANT: In order for the app to properly generate the product page and scrape the details, you MUST ensure that the urls entered for the supported sites are product page urls. To know if you're on the product page, for all the supported sites you can see the image on the left side, the title next to it and the price below it. 
+
+*Sam's Club product page urls will not work if shipping is not available. We made this decision because PriceWatch is first and foremost an 'Online' price tracker. 
+
+## URL Tracking 
+
+With each url you enter, PriceWatch will save your query to a local backend database that's accessible through the "Tracked Products" link in the navigation bar. You are able to delete entries using the delete button and sort them with 4 different sorting options. There is also a search bar that will dynamically filter the tracked products in the list in real-time depending on the user input. 
+
+## Price History and Display
+
+Every product entered, including those entered with the "Add Store" button on the product page, are updated through a set-interval. Each update is documented in a visible list and below the list there is a price chart rendered that provides an easy to see display of the updated prices generated in the price history.
+
+## UI Design
+
+PriceWatch has a very friendly UI design so even the most technologically illerate people can use the website with ease. There is also a dark mode toggle button at the right of the navigation bar that you can turn on at anytime to provide an easier viewing experience on your eyes if you want that option.
 
 ## How to Run and Start the Server
 
