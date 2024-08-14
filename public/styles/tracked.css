@@ -31,11 +31,12 @@ body, html {
 .navbar-links a {
     color: white;
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     display: block; 
     height: 100%; 
     padding: 20px 20px; 
     font-weight: bold;
+    font-family: "Comic Neue", cursive;
 }
 
 .navbar-links a:hover {
@@ -87,31 +88,36 @@ body.dark-mode .dark-mode-toggle {
 }
 
 h2 {
-    margin-top: 120px;
-    font-size: 3rem;
+    margin-top: 100px;
+    font-size: 4rem;
     text-align: center;
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 10px;
 }
 
 .sort-options {
     text-align: center;
     margin: 20px 0;
     margin-bottom: 20px;
+    font-family: "Open Sans", sans-serif;
 }
 
 .sort-options span {
     font-size: 1.2rem;
     margin-right: 10px;
+    
 }
 
 .sort-options button {
     padding: 10px 15px;
     margin: 0 5px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: white;
     transition: background-color 0.3s;
+    font-family: "Open Sans", sans-serif;
 }
 
 .sort-options button:hover {
@@ -144,6 +150,7 @@ ul#urlList li a {
     font-size: 1.4rem;
     vertical-align: middle;
     font-weight: bold;
+    font-family: "Open Sans", sans-serif;
 }
 
 ul#urlList li a:hover {

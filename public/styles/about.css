@@ -30,11 +30,12 @@ body, html {
 .navbar-links a {
     color: white;
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     display: block; 
     height: 100%; 
     padding: 20px 20px; 
     font-weight: bold;
+    font-family: "Comic Neue", cursive;
 }
 
 .navbar-links a:hover {
@@ -93,14 +94,16 @@ header {
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: 4rem;
     margin-top: 10px;
+    font-family: "Poppins", sans-serif;
 }
 
 p {
     font-size: 1.4rem;
     margin-left: 350px;
     margin-right: 350px;
+    font-family: "Open Sans", sans-serif;
 }
 
 .picture {
@@ -117,6 +120,7 @@ h2 {
     position: relative;
     display: inline-block;
     margin-bottom: 100px;
+    font-family: "Poppins", sans-serif;
 }
 
 h2::after {
@@ -149,12 +153,17 @@ h2::after {
     flex-direction: row-reverse;
 }
 
+.feature-text h3 {
+    font-family: "Poppins", sans-serif;
+}
+
 .feature-text {
     flex: 1;
     text-align: left;
 }
 
 .feature-image {
+    margin-top: 100px;
     flex: 1;
     text-align: center;
 }
